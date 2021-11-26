@@ -2,6 +2,7 @@ import sqlite3
 import os
 import json
 import requests
+import calculations
 
 """
 Uses Napster API
@@ -63,24 +64,27 @@ def obtain_artists(cur, conn):
 """
 Uses Apple Music API
 From charts, get top 10 artists of selected genres
+Genres come from the Genres table - store genre_id in table created here
 """
-def load_topArtistsbyGenre(genre):
+def load_topArtistsbyGenre(cur, conn):
     pass
 
 """
 Uses Apple Music API
-From selected artist, get top tracks including length of song
-Join with table from topArtistsbyGenre
+From selected artist, get top track including length of song
+Add to previous table (do it in the same previous function?)
 """
-def load_topTracksbyArtistSongLength(artist):
+def load_topTrackandSongLength(cur, conn):
+    # use average_song_length function
     pass
 
 """
 Uses Mixcloud API
-From selected artist, use previous table to find the tracks and get the play counts
-Add into same table
+From selected artist, get play counts (sum) for artist on its most popular track
+Create new table for new API, join with Apple Music API
 """
-def load_topTracksbyArtistPlayCounts():
+def load_playCountInformation(cur, conn):
+    # use sum_play_count function
     pass
 
 
