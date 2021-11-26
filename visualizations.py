@@ -31,3 +31,6 @@ def main():
     histogram2()
     scatterplot()
     return 0
+
+if __name__ == "__main__":
+    main()

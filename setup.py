@@ -29,25 +29,29 @@ Get genres and set up a table of genres with a corresponding integer
 Should be 23 genres
 """
 def obtain_genres():
-    response = requests.get('https://https://api.napster.com/v2.0/genres?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm')
-    data = response.text
+    response = requests.get('https://api.napster.com/v2.0/genres?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm')
+    r = response.text
+    data = json.loads(r)
 
     path = os.path.dirname(os.path.abspath(__file__))
-    conn = sqlite3.connect(path+'/'+'music')
+    conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
 
     cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='Genres'")
     
-    if cur.fetchone()[0]==0: 
+    if cur.fetchone()[0]==1: 
         return
 
-    cur.execute("CREATE TABLE Genres(genre_id INTEGER PRIMARY KEY, genre TEXT")
+    cur.execute("CREATE TABLE Genres(genre_id INTEGER PRIMARY KEY, genre TEXT)")
     
     count = 1
-    for item in data["genres"]:
+    x = type(data)
+    print(x)
+    genres_lst = data['genres']
+    for item in genres_lst:
         cur.execute("INSERT INTO Genres (genre_id, genre) VALUES (?, ?)", (count, item['name']))
         count += 1
-
+    conn.commit()
     
 """
 Uses Napster API
@@ -84,4 +88,4 @@ def load_topTracksbyArtistPlayCounts():
 Main function for this file, calls all function to collect data and store into databases
 """
 def setUp():
-    pass
+    obtain_genres()
