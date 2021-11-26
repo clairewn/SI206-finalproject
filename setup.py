@@ -4,26 +4,6 @@ import json
 import requests
 
 """
-Connect to Apple API
-"""
-def appleAPI():
-    pass
-
-"""
-Connect to Napster API
-"""
-def napsterAPI():
-    napsterAPI = 'https://api.napter.com'
-    napster_APIkey = 'OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
-
-
-"""
-Connect to Mixcloud API
-"""
-def mixcloudAPI():
-    pass
-
-"""
 Uses Napster API
 Get genres and set up a table of genres with a corresponding integer
 Should be 23 genres
@@ -49,7 +29,6 @@ def obtain_genres(cur, conn):
 """
 Uses Napster API
 Get top artists 
-Join with genre table?
 """
 def obtain_artists(cur, conn):
     cur.execute("SELECT COUNT(*) FROM Genres")
