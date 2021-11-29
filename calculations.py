@@ -1,23 +1,29 @@
 import sqlite3
 
 """
-Calculate sum of play counts for top 10 artists in each genre 
-(only for top 10 genres)
-"""
-def sum_play_counts():
-    pass
-
-"""
 Calculate average song lengths for each of the top 100 artists
+Use NapsterTopArtists and only get the most recent 100
+Request track information and average the track lengths for each artist
+Returns the average song length
 """
 def average_song_length():
     pass
 
 """
-Calculate average play counts for each of the top 100 artists
+Calculate sum of play counts for top 10 artists in each genre 
+(only for top 10 genres)
+Return the sum play count
 """
-def average_play_count():
+def sum_play_counts():
     pass
+
+"""
+Calculate sum play counts for each of the top 100 artists
+Use NapsterTopArtists table
+Returns the sum play count
+"""
+def sum_play_count_napster():
+    return 0
 
 """
 Main function for this file, calls all function to calculate data and store into database
@@ -25,4 +31,4 @@ Main function for this file, calls all function to calculate data and store into
 def calculate():
     sum_play_counts()
     average_song_length()
-    average_play_count()
+    sum_play_count_napster()

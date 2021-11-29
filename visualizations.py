@@ -3,14 +3,14 @@ import calculations
 
 """
 Histogram
-Summary of play counts for top 10 artists in the top 10 genres
+Summary of play counts for top 10 artists by genre (only top 10)
 """
 def histogram1():
     pass
 
 """
 Histogram
-Summary of play counts for top 10 tracks in the top 10 genres
+Average song length for top 10 artists by genre (only top 10)
 """
 def histogram2():
     pass
