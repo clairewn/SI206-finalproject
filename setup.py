@@ -59,25 +59,6 @@ def obtain_artists(cur, conn):
         cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (artist['name'], genre_id, artist['id']))
         conn.commit()
 
-    # # API already limits to 10 artists per request for top artists per genre
-    # for genre_id in range(0, total_genres):
-    #     # obtain genre id
-    #     request_str = "SELECT genre_id from Genres where table_id={}"
-    #     format_str = request_str.format(str(genre_id+1))
-    #     cur.execute(format_str)
-    #     genre_id = cur.fetchone()[0]
-
-    #     # get data
-    #     request_url = base_url.format(genre_id)
-    #     response = requests.get(request_url)
-    #     r = response.text
-    #     data = json.loads(r)
-
-    #     # add to table
-    #     for item in data['artists']:
-    #         cur.execute("INSERT INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (item['name'], genre_id, item['id']))
-    # conn.commit()
-
 """
 Uses Apple Music API
 From charts, get top 10 artists of selected genres
