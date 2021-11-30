@@ -3,6 +3,7 @@ import os
 import json
 import requests
 import calculations
+import random
 
 """
 Uses Napster API
@@ -35,18 +36,14 @@ def obtain_artists(cur, conn):
     cur.execute("SELECT COUNT(*) FROM Genres")
     total_genres = cur.fetchone()[0]
 
-    cur.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='NapsterTopArtists'")
-    
-    if cur.fetchone()[0]==0: 
-        cur.execute("CREATE TABLE NapsterTopArtists(name TEXT, genre INTEGER, artist_id INTEGER)")
-
+    cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(name TEXT, genre INTEGER, artist_id INTEGER)")
     base_url = 'https://api.napster.com/v2.0/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
-    # API already limits to 10 artists per request for top artists per genre
-    for genre_id in range(0, total_genres):
+    for artist in range(0, 25):
         # obtain genre id
+        genre_id = random.randint(1, 23)
         request_str = "SELECT genre_id from Genres where table_id={}"
-        format_str = request_str.format(str(genre_id+1))
+        format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
         genre_id = cur.fetchone()[0]
 
@@ -56,10 +53,11 @@ def obtain_artists(cur, conn):
         r = response.text
         data = json.loads(r)
 
-        # add to table
-        for item in data['artists']:
-            cur.execute("INSERT INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (item['name'], genre_id, item['id']))
-    conn.commit()
+        # select artist
+        rand_artist = random.randint(0, 9)
+        artist = data['artists'][rand_artist]
+        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (artist['name'], genre_id, artist['id']))
+        conn.commit()
 
 """
 Uses Apple Music API
