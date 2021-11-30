@@ -77,8 +77,8 @@ def load_topTrackandSongLength(cur, conn):
     pass
 
 """
-Uses Mixcloud API
-From selected artist, get play counts (sum) for artist on its most popular track
+Uses Youtube API
+From selected artist, get view counts (sum) for the artist on its most popular music video 
 Create new table for new API, join with Apple Music API
 """
 def load_playCountInformation(cur, conn):
