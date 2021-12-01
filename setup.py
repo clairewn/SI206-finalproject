@@ -60,16 +60,18 @@ def obtain_artists(cur, conn):
         conn.commit()
 
 """
-Uses Apple Music API
+Uses Itunes API
 From charts, get top 10 artists of selected genres
 Genres come from the Genres table - store genre_id in table created here
 """
 def load_topArtistsbyGenre(cur, conn):
+    
+
     pass
 
 """
-Uses Apple Music API
-From selected artist, get top track including length of song
+Uses Itunes API
+From selected genre, get top track including length of song 
 Add to previous table (do it in the same previous function?)
 """
 def load_topTrackandSongLength(cur, conn):
@@ -78,7 +80,7 @@ def load_topTrackandSongLength(cur, conn):
 
 """
 Uses Youtube API
-From selected artist, get view counts (sum) for the artist on its most popular music video 
+For each of the selected genres, get view counts (sum) for the most popular music video 
 Create new table for new API, join with Apple Music API
 """
 def load_playCountInformation(cur, conn):
