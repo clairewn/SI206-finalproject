@@ -27,6 +27,7 @@ def obtain_genres(cur, conn):
         cur.execute("INSERT INTO Genres (table_id, genre, genre_id) VALUES (?, ?, ?)", (count, item['name'], item['id']))
         count += 1
     conn.commit()
+
     
 """
 Uses Napster API
@@ -56,26 +57,56 @@ def obtain_artists(cur, conn):
         # select artist
         rand_artist = random.randint(0, 9)
         artist = data['artists'][rand_artist]
+
+        
+
         cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (artist['name'], genre_id, artist['id']))
         conn.commit()
 
+"""Uses Itunes API
+Get artist name from NapsterTopArtists table above
+and obtain their top track on Itunes API
 """
-Uses Itunes API
-From charts, get top 10 artists of selected genres
-Genres come from the Genres table - store genre_id in table created here
-"""
-def load_topArtistsbyGenre(cur, conn):
     
+def topTrackForArtist(cur, conn):
+    
+    cur.execute("SELECT name FROM NapsterTopArtists")
+    all_artists = cur.fetchall()
 
-    pass
+
+    
+    # cur.execute("ALTER TABLE NapsterTopArtists DROP COLUMN top_track")
+    # cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
+
+
+    for name in all_artists:
+        dude = name[0].replace(" ", "+")
+        request_url = 'https://itunes.apple.com/search?term={}&limit=1'.format(dude)
+        print(request_url)
+        #get data
+        response = requests.get(request_url)
+        r = response.text
+        data = json.loads(r)
+        # print(data)
+        # select top track
+        track = data['results'][0]['trackName']
+        print(track)
+        # cur.execute("INSERT OR IGNORE INTO top_track(track) VALUES(?)", (name[track]))
+        cur.execute("UPDATE NapsterTopArtists SET top_track={} WHERE name={} ORDER BY name LIMIT 1".format(track, name))
+        conn.commit()
+
+        
+
+
+    #pass
 
 """
 Uses Itunes API
-From selected genre, get top track including length of song 
-Add to previous table (do it in the same previous function?)
+For top track, get length of song 
+Add to NapsterTopArtists
 """
-def load_topTrackandSongLength(cur, conn):
-    # use average_song_length function
+def load_SongLength(cur, conn):
+    
     pass
 
 """
@@ -98,3 +129,4 @@ def setUp():
 
     obtain_genres(cur, conn)
     obtain_artists(cur, conn)
+    topTrackForArtist(cur, conn)
