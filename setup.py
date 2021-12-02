@@ -63,32 +63,33 @@ def obtain_artists(cur, conn):
         conn.commit()
 
 """Uses Itunes API
-Get artist name from NapsterTopArtists table above
-and obtain their top track on Itunes API
+Uses the top artist names from NapsterTopArtists table above
+to search through Itunes API 
+and obtain their top song. 
 """
     
 def topTrackForArtist(cur, conn):
     
+    #uses names from table for searching purposes
     cur.execute("SELECT name FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-
-    
-    # cur.execute("ALTER TABLE NapsterTopArtists DROP COLUMN top_track")
+    #adds new column "top_track" to existing table to match top artists for the 23 genres 
     cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
 
 
     for name in all_artists:
+        #replaces the spaces in names with '+' for Itunes API term
         dude = name[0].replace(" ", "+")
+        #search for the content with full URL w/ correct parameter keys (escapes & character in artist name)
         request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(dude.replace("&", "%26"))
         print(request_url)
-        #get data
+        #get data from API 
         response = requests.get(request_url)
         r = response.text
         data = json.loads(r)
-        # select top track
-
-        # print(data)
+        
+        
         artistid = None
         print(name[0])
         for i in data["results"]:
@@ -108,10 +109,7 @@ def topTrackForArtist(cur, conn):
                 track = i['trackName']
                 break
 
-        print(track)
-        # cur.execute("INSERT OR IGNORE INTO top_track(track) VALUES(?)", (name[track]))
-        x = "UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0])
-        print(x)
+        
         cur.execute("UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0]))
         conn.commit()
 
