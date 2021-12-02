@@ -3,7 +3,6 @@ import os
 import json
 import requests
 import calculations
-import random
 
 """
 Uses Napster API
@@ -38,11 +37,11 @@ def obtain_artists(cur, conn):
     total_genres = cur.fetchone()[0]
 
     cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(name TEXT, genre INTEGER, artist_id INTEGER)")
-    base_url = 'https://api.napster.com/v2.0/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
+    base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
-    for artist in range(0, 25):
+    for artist in range(0, 23):
         # obtain genre id
-        genre_id = random.randint(1, 23)
+        genre_id = artist + 1
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
@@ -55,8 +54,8 @@ def obtain_artists(cur, conn):
         data = json.loads(r)
 
         # select artist
-        rand_artist = random.randint(0, 9)
-        artist = data['artists'][rand_artist]
+        # rand_artist = random.randint(0, 9)
+        artist = data['artists'][0]
 
         
 
@@ -76,23 +75,44 @@ def topTrackForArtist(cur, conn):
 
     
     # cur.execute("ALTER TABLE NapsterTopArtists DROP COLUMN top_track")
-    # cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
+    cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
 
 
     for name in all_artists:
         dude = name[0].replace(" ", "+")
-        request_url = 'https://itunes.apple.com/search?term={}&limit=1'.format(dude)
+        request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(dude.replace("&", "%26"))
         print(request_url)
         #get data
         response = requests.get(request_url)
         r = response.text
         data = json.loads(r)
-        # print(data)
         # select top track
-        track = data['results'][0]['trackName']
+
+        # print(data)
+        artistid = None
+        print(name[0])
+        for i in data["results"]:
+            if i["artistName"].lower() == name[0].lower():
+                print(i)
+                artistid = i["amgArtistId"]
+                break
+        
+        request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
+        print(request_url)
+        response = requests.get(request_url)
+        r = response.text
+        data = json.loads(r)
+
+        for i in data["results"]:
+            if i["wrapperType"] == "track":
+                track = i['trackName']
+                break
+
         print(track)
         # cur.execute("INSERT OR IGNORE INTO top_track(track) VALUES(?)", (name[track]))
-        cur.execute("UPDATE NapsterTopArtists SET top_track={} WHERE name={} ORDER BY name LIMIT 1".format(track, name))
+        x = "UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0])
+        print(x)
+        cur.execute("UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0]))
         conn.commit()
 
         
@@ -126,6 +146,8 @@ def setUp():
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
+
+    cur.execute("DROP TABLE IF EXISTS NapsterTopArtists")
 
     obtain_genres(cur, conn)
     obtain_artists(cur, conn)
