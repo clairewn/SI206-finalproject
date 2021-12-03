@@ -84,6 +84,9 @@ def topTrackForArtist(cur, conn):
         print(request_url)
         #get data from API 
         response = requests.get(request_url)
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
         r = response.text
         data = json.loads(r)
         
@@ -111,10 +114,14 @@ def topTrackForArtist(cur, conn):
         r = response.text
         data = json.loads(r)
 
+        found = False
         for i in data["results"]:
             if i["wrapperType"] == "track":
                 track = i['trackName']
+                found = True
                 break
+        if not found:
+            continue
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(name, top_track) VALUES (?, ?)", (name[0], track))
         # cur.execute("UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0]))
@@ -129,7 +136,7 @@ Two helper functions: get_artist_names gets all of the current artist so far; ge
 """
 
 def get_artist_names(cur,conn):
-    command = "SELECT name FROM NapsterTopArtists"
+    command = "SELECT name FROM TopTracks"
     cur.execute(command)
     list_of_name_tuples = cur.fetchall()
     top_artist_names = []
@@ -138,7 +145,7 @@ def get_artist_names(cur,conn):
     return top_artist_names
 
 def get_track_names(cur,conn):
-    command = "SELECT top_track FROM NapsterTopArtists"
+    command = "SELECT top_track FROM TopTracks"
     cur.execute(command)
     list_of_track_tuples = cur.fetchall()
     top_track_names = []
@@ -266,8 +273,8 @@ def setUp():
     obtain_genres(cur, conn)
     obtain_artists(cur, conn, round)
     topTrackForArtist(cur, conn)
-    #obtain_channelsubscriber(cur,conn)
-    #obtain_viewcount(cur, conn)
+    obtain_channelsubscriber(cur,conn)
+    obtain_viewcount(cur, conn)
 
     outfile = open(full_path,'w', encoding='utf-8')
     round = int(round) + 1
