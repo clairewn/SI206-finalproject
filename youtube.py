@@ -3,25 +3,39 @@ import os
 import json
 import requests
 
-
 """ Youtube
-Getting subscriber count based on the name of the artist 
-Create two new tables Subscribers, ViewCount
-Two helper functions: get_artist_names gets all of the current artist so far; get_track_names gets all of the song names from the databse.
+Getting subscriber count based on the name of the artist (20 at a time).
+Getting the viewcount (playcount) of a song based on its name. (20 at a time).
+
+Create two new tables: Subscribers, ViewCount
+
+Two helper functions: 
+    (1)get_artist_names gets all of the artist names in the Napster TopArtists table. 
+    (2) get_track_names gets all of the song names in the TopTracks table.
 
 Call two API at the same time
 
+Two API keys (each can only populate 100 rows (whether for the artist subscriber or song viewcount))
+    because of quota limitation
+- "AIzaSyA6izzamX571VKt-9ok6WONA5Y3vcIsOEY"
+- "AIzaSyCGlIVEN7iVD5iN6RQ4ZEXuRxrPiUrcm9M"
+- "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
+
 """
 
-def get_artist_names(cur,conn):
+#getting artist names from TopTracks table (note: not from Top Artists!)
+def get_artist_names(cur,conn): 
     command = "SELECT name FROM TopTracks"
     cur.execute(command)
     list_of_name_tuples = cur.fetchall()
     top_artist_names = []
     for item in list_of_name_tuples:
         top_artist_names.append(item[0])
-    return top_artist_names
+    top_artists = list(dict.fromkeys(top_artist_names))
+    return top_artists
 
+
+#getting song names from TopTracks table (note: not from Top Artists!)
 def get_track_names(cur,conn):
     command = "SELECT top_track FROM TopTracks"
     cur.execute(command)
@@ -29,11 +43,12 @@ def get_track_names(cur,conn):
     top_track_names = []
     for item in list_of_track_tuples:
         top_track_names.append(item[0])
-    return top_track_names
+    top_tracks = list(dict.fromkeys(top_track_names))
+    return top_tracks
 
 def obtain_channelsubscriber(cur,conn):
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=channel&q={}&key={}"
-    youtube_key = "AIzaSyCGlIVEN7iVD5iN6RQ4ZEXuRxrPiUrcm9M"
+    youtube_key = "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
     cur.execute("CREATE TABLE IF NOT EXISTS Subscribers (channel_id TEXT PRIMARY KEY, artistName TEXT, subscriber_count INTEGER)")
     conn.commit()
 
@@ -56,7 +71,7 @@ def obtain_channelsubscriber(cur,conn):
                 r = requests.get(request_url)
                 if not r.ok:
                     print ("Exception1: Youtube first request error")
-                    print(r)
+                    print(r.text)
                     return None
             
                 #print(request_url)
@@ -91,14 +106,14 @@ def obtain_channelsubscriber(cur,conn):
                 #print(artist_name + "subscriber count is " + str(subscriberCount))
                 cur.execute("INSERT OR IGNORE INTO Subscribers (channel_id, artistName, subscriber_count) VALUES (?, ?, ?)", (channelID,artist_name,subscriberCount))
                 conn.commit()
-                
                 a = a + 1
     conn.commit()
 
         
 
 def obtain_viewcount(cur, conn):
-    youtube_key = "AIzaSyCGlIVEN7iVD5iN6RQ4ZEXuRxrPiUrcm9M"
+    youtube_key = "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
+    #change the key above if it stopped working
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=video&q={}&key={}"
     cur.execute("CREATE TABLE IF NOT EXISTS ViewCount (video_id TEXT PRIMARY KEY,  song_name TEXT, view_count INTEGER)")
     conn.commit()
@@ -112,7 +127,7 @@ def obtain_viewcount(cur, conn):
     #Gets existing song names from the Subscriber table, so that we know not to add them again.
     for name in existing_songName:
         existing_songs_in_youtube.append(name[0])
-
+        
     a = 0
 
     for songName in all_songs:
@@ -122,7 +137,7 @@ def obtain_viewcount(cur, conn):
                 r = requests.get(request_url)
                 if not r.ok:
                     print ("Exception1: Youtube first request error")
-                    print(r)
+                    print(r.text)
                     return None
                 
                 #print(request_url)
@@ -154,6 +169,7 @@ def obtain_viewcount(cur, conn):
 
                 #print(artist_name + "subscriber count is " + str(subscriberCount))
                 cur.execute("INSERT OR IGNORE INTO ViewCount (video_id, song_name, view_count) VALUES (?, ?, ?)", (videoID,songName,viewCount))
+                conn.commit()
                 a = a + 1
     conn.commit()
 

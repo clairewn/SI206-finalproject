@@ -142,7 +142,7 @@ def setUp():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
 
-    # cur.execute("DROP TABLE IF EXISTS NapsterTopArtists")
+    #cur.execute("DROP TABLE IF EXISTS NapsterTopArtists")
     #cur.execute("DROP TABLE IF EXISTS Subscribers")
     #cur.execute("DROP TABLE IF EXISTS ViewCount")
 
