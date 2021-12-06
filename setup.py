@@ -40,21 +40,20 @@ def obtain_artists(cur, conn):
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
     for artist in range(0, 23):
-        # obtain genre id
+        # obtain genre id in order of table above 
         genre_id = artist + 1
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
         genre_id = cur.fetchone()[0]
 
-        # get data
+        # get desired data from API using genre 
         request_url = base_url.format(genre_id)
         response = requests.get(request_url)
         r = response.text
         data = json.loads(r)
 
-        # select artist
-        # rand_artist = random.randint(0, 9)
+        # select top artist from data 
         artist = data['artists'][0]
 
         
