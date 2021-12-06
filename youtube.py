@@ -4,8 +4,8 @@ import json
 import requests
 
 """ Youtube
-Getting subscriber count based on the name of the artist (20 at a time).
-Getting the viewcount (playcount) of a song based on its name. (20 at a time).
+Getting subscriber count based on the name of the artist (25 at a time).
+Getting the viewcount (playcount) of a song based on its name. (25 at a time).
 
 Create two new tables: Subscribers, ViewCount
 
@@ -15,11 +15,12 @@ Two helper functions:
 
 Call two API at the same time
 
-Two API keys (each can only populate 100 rows (whether for the artist subscriber or song viewcount))
+Usable API keys (each can only populate 100 rows (whether for the artist subscriber or song viewcount))
     because of quota limitation
 - "AIzaSyA6izzamX571VKt-9ok6WONA5Y3vcIsOEY"
 - "AIzaSyCGlIVEN7iVD5iN6RQ4ZEXuRxrPiUrcm9M"
 - "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
+- "AIzaSyDdWPcix3qiQZVPg9Mx2GXwHkoIiewK9dE"
 
 """
 
@@ -48,7 +49,7 @@ def get_track_names(cur,conn):
 
 def obtain_channelsubscriber(cur,conn):
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=channel&q={}&key={}"
-    youtube_key = "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
+    youtube_key = "AIzaSyDdWPcix3qiQZVPg9Mx2GXwHkoIiewK9dE"
     cur.execute("CREATE TABLE IF NOT EXISTS Subscribers (channel_id TEXT PRIMARY KEY, artistName TEXT, subscriber_count INTEGER)")
     conn.commit()
 
@@ -66,7 +67,7 @@ def obtain_channelsubscriber(cur,conn):
 
     for artist_name in all_artists:
         if artist_name not in existing_artists_in_youtube: #filter out those already in Subscriber table
-            if a < 20: #populate 20 at a time
+            if a < 25: #populate 25 at a time
                 request_url = base_url.format(artist_name,youtube_key)
                 r = requests.get(request_url)
                 if not r.ok:
@@ -112,7 +113,7 @@ def obtain_channelsubscriber(cur,conn):
         
 
 def obtain_viewcount(cur, conn):
-    youtube_key = "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
+    youtube_key = "AIzaSyDdWPcix3qiQZVPg9Mx2GXwHkoIiewK9dE"
     #change the key above if it stopped working
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=video&q={}&key={}"
     cur.execute("CREATE TABLE IF NOT EXISTS ViewCount (video_id TEXT PRIMARY KEY,  song_name TEXT, view_count INTEGER)")
@@ -132,7 +133,7 @@ def obtain_viewcount(cur, conn):
 
     for songName in all_songs:
         if songName not in existing_songs_in_youtube: #filter out those already in Subscriber table
-            if a < 20: #populate 20 at a time
+            if a < 25: #populate 25 at a time
                 request_url = base_url.format(songName,youtube_key)
                 r = requests.get(request_url)
                 if not r.ok:
@@ -178,7 +179,7 @@ def main():
 
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
-    #cur.execute("DROP TABLE IF EXISTS Subscribers")
+    #cur.execute("DROP TABLE IF EXISTS Subscribers") - if ever need to reset
     #cur.execute("DROP TABLE IF EXISTS ViewCount")
 
     obtain_channelsubscriber(cur,conn)

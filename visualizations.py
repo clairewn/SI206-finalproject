@@ -22,16 +22,7 @@ def histogram1(cur,conn):
         GROUP BY Genres.genre;
         
     """
-    # command = """
-    #     SELECT ViewCount.view_count, Genres.genre
-    #     FROM Subscribers 
-    #     JOIN TopTracks
-    #     ON Subscribers.artistName = TopTracks.name
-    #     JOIN Genres
-    #     ON Genres.genre_id = TopTracks.
-    #     GROUP BY Genres.genre;
-
-    # """  
+    
     cur.execute(command)
     list_of_genre_tuples = cur.fetchall()
     genre_names = []
@@ -60,12 +51,29 @@ def histogram1(cur,conn):
             #plt.text(i, subscribers_sum[i], subscribers_sum[i], ha = 'center')
         plt.text(i, subscribers_sum[i], subscribers_sum[i], fontsize = 5.5, ha = 'center')
 
-    #fig.savefig("name.png")
+    #fig.savefig("name.png") - for saving the image
     plt.show()
 
+
+"""
+Histogram extra (also youtube)
+Summary of play counts for top 10 music from each genre 
+"""
+
+def youtube_extra():
+    # command = """
+    #     SELECT ViewCount.view_count, Genres.genre
+    #     FROM Subscribers 
+    #     JOIN TopTracks
+    #     ON Subscribers.artistName = TopTracks.name
+    #     JOIN Genres
+    #     ON Genres.genre_id = TopTracks.
+    #     GROUP BY Genres.genre;
+
+    # """  
+
+
     pass
-
-
 
 
 """
@@ -89,16 +97,16 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    #setup.setUp()
+    setup.setUp()
     #calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
-    path = os.path.dirname(os.path.abspath(__file__))
-    conn = sqlite3.connect(path+'/'+'music.db')
-    cur = conn.cursor()
+
+    #path = os.path.dirname(os.path.abspath(__file__))
+    #conn = sqlite3.connect(path+'/'+'music.db')
+    #cur = conn.cursor()
     #histogram1(cur, conn)
-    histogram1(cur,conn)
 
     return 0
 
