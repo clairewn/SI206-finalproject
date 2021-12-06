@@ -2,12 +2,12 @@ import sqlite3
 import os
 import json
 import requests
-import calculations
+import youtube
 
 """
+Creates the Genres Table
 Uses Napster API
-Get genres and set up a table of genres with a corresponding integer
-Should be 23 genres
+23 total genres
 """
 def obtain_genres(cur, conn):
     response = requests.get('https://api.napster.com/v2.0/genres?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm')
@@ -29,19 +29,22 @@ def obtain_genres(cur, conn):
 
     
 """
-Uses Napster API
-Get top artists 
+Creates or adds to the NapsterTopArtists Table
+Uses Napster and Youtube API
 """
-def obtain_artists(cur, conn):
+def obtain_artists(cur, conn, round):
     cur.execute("SELECT COUNT(*) FROM Genres")
     total_genres = cur.fetchone()[0]
 
-    cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(name TEXT, genre INTEGER, artist_id INTEGER)")
+    cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(artist_id INTEGER PRIMARY KEY, name TEXT, genre_id INTEGER, subscribers INTEGER)")
+    
+    cur.execute("SELECT COUNT (*) FROM NapsterTopArtists")
+    total_artists = cur.fetchone()[0]
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
-    for artist in range(0, 23):
-        # obtain genre id in order of table above 
-        genre_id = artist + 1
+    for genre in range(0, total_genres):
+        # obtain genre id
+        genre_id = genre + 1
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
@@ -53,29 +56,35 @@ def obtain_artists(cur, conn):
         r = response.text
         data = json.loads(r)
 
-        # select top artist from data 
-        artist = data['artists'][0]
+        # select artist
+        artist = data['artists'][int(round)]
 
+        table_genre_id = genre + 1
+
+        subscribers = youtube.subscribers_for_artist(artist['name'])
+        if subscribers is None:
+            continue
         
-
-        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (artist['name'], genre_id, artist['id']))
+        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
+        total_artists = total_artists + 1
         conn.commit()
 
-"""Uses Itunes API
-Uses the top artist names from NapsterTopArtists table above
-to search through Itunes API 
-and obtain their top song. 
+"""
+Creates or adds to the TopTracks Table
+Uses ITunes and Youtube API
 """
     
 def topTrackForArtist(cur, conn):
     
     #uses names from table for searching purposes
-    cur.execute("SELECT name FROM NapsterTopArtists")
+    cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-    #adds new column "top_track" to existing table to match top artists for the 23 genres 
-    cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
+    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER)")
 
+    cur.execute("SELECT COUNT (*) FROM TopTracks")
+    total_tracks = cur.fetchone()[0]
+    all_artists = all_artists[total_tracks:]
 
     for name in all_artists:
         #replaces the spaces in names with '+' for Itunes API term
@@ -85,55 +94,51 @@ def topTrackForArtist(cur, conn):
         print(request_url)
         #get data from API 
         response = requests.get(request_url)
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
         r = response.text
         data = json.loads(r)
         
         
         artistid = None
+        unavailable = False
         print(name[0])
         for i in data["results"]:
             if i["artistName"].lower() == name[0].lower():
                 print(i)
-                artistid = i["amgArtistId"]
+                if ("amgArtistId" not in i):
+                    unavailable = True
+                else:
+                    artistid = i["amgArtistId"]
                 break
+        if unavailable:
+            continue
         
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
         print(request_url)
         response = requests.get(request_url)
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
         r = response.text
         data = json.loads(r)
 
+        found = False
         for i in data["results"]:
             if i["wrapperType"] == "track":
                 track = i['trackName']
+                found = True
                 break
+        if not found:
+            continue
 
-        
-        cur.execute("UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0]))
+        viewcount = youtube.viewcount_for_track(track)
+        if viewcount == None:
+            continue
+
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
         conn.commit()
-
-        
-
-
-    #pass
-
-"""
-Uses Itunes API
-For top track, get length of song 
-Add to NapsterTopArtists
-"""
-def load_SongLength(cur, conn):
-    
-    pass
-
-"""
-Uses Youtube API
-For each of the selected genres, get view counts (sum) for the most popular music video 
-Create new table for new API, join with Apple Music API
-"""
-def load_playCountInformation(cur, conn):
-    # use sum_play_count function
-    pass
 
 
 """
@@ -141,11 +146,23 @@ Main function for this file, calls all function to collect data and store into d
 """
 def setUp():
     path = os.path.dirname(os.path.abspath(__file__))
+
+    full_path = os.path.join(path, 'round.txt')
+    infile = open(full_path,'r', encoding='utf-8')
+    round = infile.readline()
+    infile.close()
+
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
 
-    cur.execute("DROP TABLE IF EXISTS NapsterTopArtists")
-
     obtain_genres(cur, conn)
-    obtain_artists(cur, conn)
+    obtain_artists(cur, conn, round)
     topTrackForArtist(cur, conn)
+
+    outfile = open(full_path,'w', encoding='utf-8')
+    round = int(round) + 1
+    num = str(round)
+    outfile.write(num)
+    outfile.close()
+
+#setUp() - if just run this setup.py to test 
