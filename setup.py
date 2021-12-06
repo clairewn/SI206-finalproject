@@ -62,7 +62,7 @@ def obtain_artists(cur, conn, round):
 
         table_genre_id = genre + 1
 
-        subscribers = youtube.subscribers_for_artist(artist)
+        subscribers = youtube.subscribers_for_artist(artist['name'])
         if subscribers is None:
             continue
         
@@ -82,9 +82,11 @@ def topTrackForArtist(cur, conn):
     cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-    #adds new column "top_track" to existing table to match top artists for the 23 genres 
-    # cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
     cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER)")
+
+    cur.execute("SELECT COUNT (*) FROM TopTracks")
+    total_tracks = cur.fetchone()[0]
+    all_artists = all_artists[total_tracks:]
 
     for name in all_artists:
         #replaces the spaces in names with '+' for Itunes API term
