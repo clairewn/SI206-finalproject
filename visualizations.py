@@ -141,7 +141,7 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    #setup.setUp() - uncommon to populate the table again
+    setup.setUp() 
     #calculations.calculate()
     #histogram1()
     #histogram2()
@@ -151,7 +151,7 @@ def main():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
     #histogram1(cur, conn)
-    youtube_extra(cur,conn)
+    # youtube_extra(cur,conn)
 
 
 

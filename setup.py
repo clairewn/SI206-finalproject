@@ -2,7 +2,7 @@ import sqlite3
 import os
 import json
 import requests
-import calculations
+import youtube
 
 """
 Uses Napster API
@@ -30,18 +30,22 @@ def obtain_genres(cur, conn):
     
 """
 Uses Napster API
-Get top artists 
+Uses Youtube API
+Get top artists from Napster and their subscribers from Youtube
 """
 def obtain_artists(cur, conn, round):
     cur.execute("SELECT COUNT(*) FROM Genres")
     total_genres = cur.fetchone()[0]
 
-    cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(name TEXT, genre INTEGER, artist_id INTEGER)")
+    cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(artist_id INTEGER PRIMARY KEY, name TEXT, genre_id INTEGER, subscribers INTEGER)")
+    
+    cur.execute("SELECT COUNT (*) FROM NapsterTopArtists")
+    total_artists = cur.fetchone()[0]
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
-    for artist in range(0, total_genres):
+    for genre in range(0, total_genres):
         # obtain genre id
-        genre_id = artist + 1
+        genre_id = genre + 1
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
@@ -54,10 +58,16 @@ def obtain_artists(cur, conn, round):
         data = json.loads(r)
 
         # select artist
-        # rand_artist = random.randint(0, 9)
         artist = data['artists'][int(round)]
 
-        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(name, genre, artist_id) VALUES (?, ?, ?)", (artist['name'], genre_id, artist['id']))
+        table_genre_id = genre + 1
+
+        subscribers = youtube.subscribers_for_artist(artist)
+        if subscribers is None:
+            continue
+        
+        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
+        total_artists = total_artists + 1
         conn.commit()
 
 """Uses Itunes API
@@ -69,12 +79,12 @@ and obtain their top song.
 def topTrackForArtist(cur, conn):
     
     #uses names from table for searching purposes
-    cur.execute("SELECT name FROM NapsterTopArtists")
+    cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
     #adds new column "top_track" to existing table to match top artists for the 23 genres 
     # cur.execute("ALTER TABLE NapsterTopArtists ADD COLUMN top_track char(50)")
-    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(name TEXT, top_track TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER)")
 
     for name in all_artists:
         #replaces the spaces in names with '+' for Itunes API term
@@ -123,8 +133,11 @@ def topTrackForArtist(cur, conn):
         if not found:
             continue
 
-        cur.execute("INSERT OR IGNORE INTO TopTracks(name, top_track) VALUES (?, ?)", (name[0], track))
-        # cur.execute("UPDATE NapsterTopArtists SET top_track=? WHERE name=?", (track, name[0]))
+        viewcount = youtube.viewcount_for_track(track)
+        if viewcount == None:
+            continue
+
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
         conn.commit()
 
 
@@ -149,7 +162,8 @@ def setUp():
     obtain_genres(cur, conn)
     obtain_artists(cur, conn, round)
     topTrackForArtist(cur, conn)
-    
+    # youtube.obtain_channelsubscriber(cur, conn)
+    # youtube.obtain_viewcount(cur, conn)
 
     outfile = open(full_path,'w', encoding='utf-8')
     round = int(round) + 1
