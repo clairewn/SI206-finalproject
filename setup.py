@@ -5,9 +5,9 @@ import requests
 import youtube
 
 """
+Creates the Genres Table
 Uses Napster API
-Get genres and set up a table of genres with a corresponding integer
-Should be 23 genres
+23 total genres
 """
 def obtain_genres(cur, conn):
     response = requests.get('https://api.napster.com/v2.0/genres?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm')
@@ -29,9 +29,8 @@ def obtain_genres(cur, conn):
 
     
 """
-Uses Napster API
-Uses Youtube API
-Get top artists from Napster and their subscribers from Youtube
+Creates or adds to the NapsterTopArtists Table
+Uses Napster and Youtube API
 """
 def obtain_artists(cur, conn, round):
     cur.execute("SELECT COUNT(*) FROM Genres")
@@ -70,10 +69,9 @@ def obtain_artists(cur, conn, round):
         total_artists = total_artists + 1
         conn.commit()
 
-"""Uses Itunes API
-Uses the top artist names from NapsterTopArtists table above
-to search through Itunes API 
-and obtain their top song. 
+"""
+Creates or adds to the TopTracks Table
+Uses ITunes and Youtube API
 """
     
 def topTrackForArtist(cur, conn):
@@ -157,15 +155,9 @@ def setUp():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
 
-    #cur.execute("DROP TABLE IF EXISTS NapsterTopArtists")
-    #cur.execute("DROP TABLE IF EXISTS Subscribers")
-    #cur.execute("DROP TABLE IF EXISTS ViewCount")
-
     obtain_genres(cur, conn)
     obtain_artists(cur, conn, round)
     topTrackForArtist(cur, conn)
-    # youtube.obtain_channelsubscriber(cur, conn)
-    # youtube.obtain_viewcount(cur, conn)
 
     outfile = open(full_path,'w', encoding='utf-8')
     round = int(round) + 1
