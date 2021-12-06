@@ -58,22 +58,66 @@ def histogram1(cur,conn):
 """
 Histogram extra (also youtube)
 Summary of play counts for top 10 music from each genre 
+Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
 
-def youtube_extra():
-    # command = """
-    #     SELECT ViewCount.view_count, Genres.genre
-    #     FROM Subscribers 
-    #     JOIN TopTracks
-    #     ON Subscribers.artistName = TopTracks.name
-    #     JOIN Genres
-    #     ON Genres.genre_id = TopTracks.
-    #     GROUP BY Genres.genre;
+def youtube_extra(cur,conn):
+    #first - get a list of unique tuples (artistName, trackName)
 
-    # """  
+    command = "SELECT DISTINCT name, top_track FROM TopTracks"
+    cur.execute(command)
+    list_of_artist_songs = cur.fetchall()
+    #print(list_of_artist_songs)
 
+    #next - get the genre of this track (artistName, trackName)
+    d = {}
+    command2 = "SELECT Genres.genre FROM Genres JOIN NapsterTopArtists ON Genres.genre_id = NapsterTopArtists.genre WHERE NapsterTopArtists.name = (?)"
+    #command2 = "SELECT genre FROM NapsterTopArtists WHERE name = '{}'"
+    
 
-    pass
+    for pair in list_of_artist_songs:
+        artistName = pair[0]
+        command_two = command2.format(artistName)
+        print(command_two)
+        cur.execute(command2,(artistName,))
+        result = cur.fetchone()[0] #- this would be the genre ID
+
+        print(result)
+
+        songName = pair[1]
+        #command_three = "SELECT view_count FROM ViewCount WHERE song_name = ("%s")" %(songName)
+        cur.execute('SELECT view_count FROM ViewCount WHERE song_name = \"{}\"'.format(songName))
+        this_song_count = int(cur.fetchone()[0]) #- this would be the view count
+
+        if result not in d:
+            d[result] = this_song_count
+        else:
+            d[result] = d[result] + this_song_count
+    
+    genres = list(d.keys())
+    view_count_sum = list(d.values())
+
+    fig, ax = plt.subplots(figsize=(8,7))
+
+    N = len(genres)
+    width = 0.35
+    ind = np.arange(N)
+    p1 = ax.bar(ind, view_count_sum, width, color='blue')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(genres, fontsize=10, rotation='vertical')
+
+    ax.autoscale_view()
+    ax.set(xlabel='Genres', ylabel='Sum Play Counts of Top 10 Songs', \
+        title='Sum of Play Counts of Top Songs in each Genre')
+    ax.grid()
+    fig.tight_layout()
+
+    for i in range(len(view_count_sum)):
+        plt.text(i, view_count_sum[i], view_count_sum[i], fontsize = 5.5, ha = 'center')
+
+    #fig.savefig("name.png") - for saving the image
+    plt.show()
+
 
 
 """
@@ -97,16 +141,19 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    setup.setUp()
+    #setup.setUp() - uncommon to populate the table again
     #calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
 
-    #path = os.path.dirname(os.path.abspath(__file__))
-    #conn = sqlite3.connect(path+'/'+'music.db')
-    #cur = conn.cursor()
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+'music.db')
+    cur = conn.cursor()
     #histogram1(cur, conn)
+    youtube_extra(cur,conn)
+
+
 
     return 0
 
