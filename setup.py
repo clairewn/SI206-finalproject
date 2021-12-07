@@ -86,6 +86,8 @@ def topTrackForArtist(cur, conn):
     total_tracks = cur.fetchone()[0]
     check_artists = all_artists[total_tracks:]
 
+    
+
     for name in check_artists:
         check_url = "SELECT COUNT(*) from TopTracks WHERE artist_id={}"
         format_check = check_url.format(name[1])
@@ -169,7 +171,7 @@ def setUp():
     num = str(round)
     outfile.write(num)
     outfile.close()
-
-
+    
+setUp()
 
 #setUp() - if just run this setup.py to test 

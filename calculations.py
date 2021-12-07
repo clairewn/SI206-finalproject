@@ -57,3 +57,5 @@ def calculate():
     
     average_subscribers_per_genre(cur)
     average_viewcount_per_genre(cur)
+    
+    
