@@ -164,8 +164,10 @@ def percentageOfPopularChannels(cur, conn):
 
 
 """
-Histogram
+Histogram 
 Average song length for top 10 artists by genre (only top 10)
+**use either track price or trackmilliseconds in itunes API
+**write in calculations
 """
 def histogram2():
     pass

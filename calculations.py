@@ -73,6 +73,8 @@ def average_viewcount_per_genre(cur):
 
     outfile.close()
 
+#def (i will finish this-Joyce)
+
 """
 Main function for this file, calls all functions to calculate data and store into database
 """
