@@ -80,16 +80,16 @@ def topSongForArtist(cur, conn):
     cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-    cur.execute("CREATE TABLE IF NOT EXISTS TopSongs(artist_id INTEGER, top_song TEXT, view_count INTEGER)")
+    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_song TEXT, view_count INTEGER)")
 
-    cur.execute("SELECT COUNT (*) FROM TopSongs")
+    cur.execute("SELECT COUNT (*) FROM TopTracks")
     total_songs = cur.fetchone()[0]
     check_artists = all_artists[total_songs:]
 
     
 
     for name in check_artists:
-        check_url = "SELECT COUNT(*) from TopSongs WHERE artist_id={}"
+        check_url = "SELECT COUNT(*) from TopTracks WHERE artist_id={}"
         format_check = check_url.format(name[1])
         cur.execute(format_check)
         if cur.fetchone()[0] != 0:
@@ -133,20 +133,21 @@ def topSongForArtist(cur, conn):
         found = False
         for i in data["results"]:
             if i["wrapperType"] == "track":
-                song = i['trackName']
+                track = i['trackName']
                 found = True
                 break
         if not found:
             continue
 
-        viewcount = youtube.viewcount_for_track(song)
+        viewcount = youtube.viewcount_for_track(track)
         if viewcount == None:
             continue
 
-        cur.execute("INSERT OR IGNORE INTO TopSongs(artist_id, top_song, view_count) VALUES (?, ?, ?)", (name[1], song, viewcount))
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_song, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
         conn.commit()
 
-"""def topSongLength(cur, conn):
+"""
+def topSongLength(cur, conn):
 
     cur.execute("SELECT artist_id, top_track FROM TopTracks")
     all_songs = cur.fetchall()
@@ -214,7 +215,8 @@ def topSongForArtist(cur, conn):
             continue
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
-        conn.commit()"""
+        conn.commit()
+"""
 
 
 
