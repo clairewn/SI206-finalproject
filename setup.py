@@ -98,7 +98,6 @@ def topTrackForArtist(cur, conn):
         person = name[0].replace(" ", "+")
         #search for the content with full URL w/ correct parameter keys (escapes & character in artist name)
         request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(person.replace("&", "%26"))
-        print(request_url)
         #get data from API 
         response = requests.get(request_url)
         if response.status_code != 200:
@@ -110,10 +109,10 @@ def topTrackForArtist(cur, conn):
         
         artistid = None
         unavailable = False
-        print(name[0])
+        
         for i in data["results"]:
             if i["artistName"].lower() == name[0].lower():
-                print(i)
+                
                 if ("amgArtistId" not in i):
                     unavailable = True
                 else:
@@ -123,7 +122,7 @@ def topTrackForArtist(cur, conn):
             continue
         
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
-        print(request_url)
+        
         response = requests.get(request_url)
         if response.status_code != 200:
             # TODO: delete from original table?
@@ -146,6 +145,9 @@ def topTrackForArtist(cur, conn):
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
         conn.commit()
+
+#def topTrackLength(cur, conn):
+
 
 
 """
