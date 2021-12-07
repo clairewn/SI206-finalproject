@@ -139,11 +139,11 @@ def topTrackForArtist(cur, conn):
         if not found:
             continue
 
-        viewcount = youtube.viewcount_for_track(track)
-        if viewcount == None:
+        viewCount = youtube.viewcount_for_track(track)
+        if viewCount == None:
             continue
 
-        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewCount))
         conn.commit()
 
 

@@ -203,6 +203,7 @@ def main():
         # please edit if you are using them! Thanks :)
     
     setup.setUp() 
+    youtube.py()
     calculations.calculate()
     #histogram1()
     #histogram2()
@@ -213,9 +214,13 @@ def main():
     cur = conn.cursor()
     #histogram1(cur, conn)
     # youtube_extra(cur,conn)
-    scatterplot(cur)
+    #scatterplot(cur)
+    #percentageOfPopularChannels()
 
     return 0
 
+    
+
 if __name__ == "__main__":
     main()
+

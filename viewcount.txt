@@ -1,23 +1,23 @@
-The average number of view counts for Pop is 2057449556.
-The average number of view counts for Rock is 324168582.
-The average number of view counts for Alternative is 957203969.
-The average number of view counts for Rap/Hip-Hop is 386844785.
-The average number of view counts for Holiday Music is 203684280.
-The average number of view counts for Soul/R&B is 506078568.
-The average number of view counts for Country is 295167929.
-The average number of view counts for Jazz is 39039550.
-The average number of view counts for Electronic is 1205689599.
-The average number of view counts for Latin is 586344523.
-The average number of view counts for World is 871022581.
-The average number of view counts for Reggae is 116188668.
-The average number of view counts for Classical is 508657740.
-The average number of view counts for Oldies is 227680450.
-The average number of view counts for New Age is 112341876.
-The average number of view counts for Christian/Gospel is 128382126.
-The average number of view counts for Blues is 38533653.
-The average number of view counts for Folk is 330730959.
-The average number of view counts for Vocal/Easy Listening is 51118718.
-The average number of view counts for Soundtracks is 935159032.
-The average number of view counts for Children is 659717196.
-The average number of view counts for Metal is 206523395.
-The average number of view counts for Comedy/Spoken Word is 20785262.
+The average number of view counts for Pop is [(7506806835, 2, 3753403417.5)].
+The average number of view counts for Rock is [(804578576, 2, 402289288.0)].
+The average number of view counts for Alternative is [(802719185, 2, 401359592.5)].
+The average number of view counts for Rap/Hip-Hop is [(2454282412, 2, 1227141206.0)].
+The average number of view counts for Holiday Music is [(493729528, 2, 246864764.0)].
+The average number of view counts for Soul/R&B is [(1146314973, 2, 573157486.5)].
+The average number of view counts for Country is [(413382274, 2, 206691137.0)].
+The average number of view counts for Jazz is [(11164650, 2, 5582325.0)].
+The average number of view counts for Electronic is [(1814239034, 2, 907119517.0)].
+The average number of view counts for Latin is [(93219065, 2, 46609532.5)].
+The average number of view counts for World is [(1216765296, 2, 608382648.0)].
+The average number of view counts for Reggae is [(25935926, 2, 12967963.0)].
+The average number of view counts for Classical is [(59962175, 1, 59962175.0)].
+The average number of view counts for Oldies is [(469413392, 2, 234706696.0)].
+The average number of view counts for New Age is [(116062086, 1, 116062086.0)].
+The average number of view counts for Christian/Gospel is [(382013335, 2, 191006667.5)].
+The average number of view counts for Blues is [(81803330, 2, 40901665.0)].
+The average number of view counts for Folk is [(766857427, 1, 766857427.0)].
+The average number of view counts for Vocal/Easy Listening is [(34877725, 1, 34877725.0)].
+The average number of view counts for Soundtracks is [(None, 0, None)].
+The average number of view counts for Children is [(None, 0, None)].
+The average number of view counts for Metal is [(3379939, 1, 3379939.0)].
+The average number of view counts for Comedy/Spoken Word is [(109045777, 2, 54522888.5)].
