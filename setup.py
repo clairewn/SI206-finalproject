@@ -159,13 +159,13 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
 
         response = requests.get(request_url)
-        if not response.ok:
-            return None
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
         r = response.text
         data = json.loads(r)
 
-        if found == False:
-            return None
+        found = False
         for i in data["results"]:
             if i["wrapperType"] == "track":
                 price = i['trackPrice']
@@ -178,20 +178,19 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
 
         response = requests.get(request_url)
-        if not response.ok:
-            return None
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
         r = response.text 
         data = json.loads(r)
 
-        if found == False:
-            return None 
+        found = False
         for i in data["results"]:
             if i["wrapperType"] == "track":
                 length = i['trackTimeMillis']
                 found = True
         if not found:
             continue 
-
 
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
@@ -222,5 +221,5 @@ def setUp():
     outfile.write(num)
     outfile.close()
 
-#setUp()
+setUp()
 
