@@ -147,6 +147,8 @@ def topTrackForArtist(cur, conn):
         conn.commit()
 
 
+
+
 """
 Main function for this file, calls all function to collect data and store into databases
 """
