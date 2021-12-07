@@ -75,6 +75,21 @@ def average_viewcount_per_genre(cur):
     outfile.close()
 
 """
+Takes in database cursor. Output is a JSON file displaying
+the average song length on Itunes for each genre. 
+
+def average_song_length_per_genre(cur):
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'songlength.txt')
+    outfile = open(full_path,'w', encoding='utf-8')
+
+    cur.execute(""
+
+    
+"""
+
+
+"""
 Calculates percentages for pie charts and groups artists 
 by their number of subscribers. 
 """

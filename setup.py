@@ -159,9 +159,8 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
 
         response = requests.get(request_url)
-        if response.status_code != 200:
-            # TODO: delete from original table?
-            continue
+        if not response.ok:
+            return None
         r = response.text
         data = json.loads(r)
 
@@ -178,9 +177,8 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
 
         response = requests.get(request_url)
-        if response.status_code != 200:
-            # TODO: delete from original table?
-            continue
+        if not response.ok: 
+            return None
         r = response.text 
         data = json.loads(r)
 
@@ -222,4 +220,5 @@ def setUp():
     outfile.close()
 
 setUp()
+
 
