@@ -70,21 +70,91 @@ def obtain_artists(cur, conn, round):
         conn.commit()
 
 """
-Creates or adds to the TopTracks Table
+Creates or adds to the TopSongs Table
 Uses ITunes and Youtube API
 """
     
-def topTrackForArtist(cur, conn):
+def topSongForArtist(cur, conn):
     
     #uses names from table for searching purposes
     cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER)")
+    cur.execute("CREATE TABLE IF NOT EXISTS TopSongs(artist_id INTEGER, top_song TEXT, view_count INTEGER)")
+
+    cur.execute("SELECT COUNT (*) FROM TopSongs")
+    total_songs = cur.fetchone()[0]
+    check_artists = all_artists[total_songs:]
+
+    
+
+    for name in check_artists:
+        check_url = "SELECT COUNT(*) from TopSongs WHERE artist_id={}"
+        format_check = check_url.format(name[1])
+        cur.execute(format_check)
+        if cur.fetchone()[0] != 0:
+            continue
+        #replaces the spaces in names with '+' for Itunes API term
+        person = name[0].replace(" ", "+")
+        #search for the content with full URL w/ correct parameter keys (escapes '&' character in artist name)
+        request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(person.replace("&", "%26"))
+        #get data from API 
+        response = requests.get(request_url)
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
+        r = response.text
+        data = json.loads(r)
+        
+        
+        artistid = None
+        unavailable = False
+        
+        for i in data["results"]:
+            if i["artistName"].lower() == name[0].lower():
+                
+                if ("amgArtistId" not in i):
+                    unavailable = True
+                else:
+                    artistid = i["amgArtistId"]
+                break
+        if unavailable:
+            continue
+        
+        request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
+        
+        response = requests.get(request_url)
+        if response.status_code != 200:
+            # TODO: delete from original table?
+            continue
+        r = response.text
+        data = json.loads(r)
+
+        found = False
+        for i in data["results"]:
+            if i["wrapperType"] == "track":
+                song = i['trackName']
+                found = True
+                break
+        if not found:
+            continue
+
+        viewcount = youtube.viewcount_for_track(song)
+        if viewcount == None:
+            continue
+
+        cur.execute("INSERT OR IGNORE INTO TopSongs(artist_id, top_song, view_count) VALUES (?, ?, ?)", (name[1], song, viewcount))
+        conn.commit()
+
+"""def topSongLength(cur, conn):
+
+    cur.execute("SELECT artist_id, top_track FROM TopTracks")
+    all_songs = cur.fetchall()
+
 
     cur.execute("SELECT COUNT (*) FROM TopTracks")
     total_tracks = cur.fetchone()[0]
-    check_artists = all_artists[total_tracks:]
+    check_artists = all_songs[total_tracks:]
 
     
 
@@ -144,9 +214,7 @@ def topTrackForArtist(cur, conn):
             continue
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewcount))
-        conn.commit()
-
-#def topTrackLength(cur, conn):
+        conn.commit()"""
 
 
 
@@ -167,7 +235,7 @@ def setUp():
 
     obtain_genres(cur, conn)
     obtain_artists(cur, conn, round)
-    topTrackForArtist(cur, conn)
+    topSongForArtist(cur, conn)
 
     outfile = open(full_path,'w', encoding='utf-8')
     round = int(round) + 1
@@ -175,4 +243,4 @@ def setUp():
     outfile.write(num)
     outfile.close()
 
-# setUp()
+setUp()
