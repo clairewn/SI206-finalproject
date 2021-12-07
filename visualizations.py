@@ -57,7 +57,7 @@ def histogram1(cur,conn):
 
 """
 Histogram extra (also youtube)
-Summary of play counts for top 10 music from each genre 
+Summary of view counts for top 10 music from each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
 
