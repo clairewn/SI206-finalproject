@@ -71,6 +71,8 @@ def average_viewcount_per_genre(cur):
 
     outfile.close()
 
+
+
 """
 Main function for this file, calls all functions to calculate data and store into database
 """
@@ -82,5 +84,5 @@ def calculate():
     average_subscribers_per_genre(cur)
     average_viewcount_per_genre(cur)
 
-calculate()
+# calculate()
     
