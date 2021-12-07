@@ -56,8 +56,8 @@ def histogram1(cur,conn):
 
 
 """
-Histogram extra (also youtube)
-Summary of view counts for top 10 music from each genre 
+Histogram (extra visualization)
+Summary of view counts for top 10 music videos from each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
 
@@ -118,6 +118,47 @@ def youtube_extra(cur,conn):
     #fig.savefig("name.png") - for saving the image
     plt.show()
 
+"""
+Piechart (extra visualization): 
+Shows the percentage of artists with subscribers 
+above a value of 500,000 versus below it. 
+Visualizes the % of top artists who have a notable
+number of Youtube channel subs. 
+"""
+def percentageOfPopularChannels(cur, conn):
+
+    #initialize data
+    total_artists = 0
+    cur.execute("SELECT name FROM NapsterTopArtists")
+
+    #fetch all artist names & loop through it
+    artist_info = cur.fetchall()
+    for i in artist_info:
+        total_artists += 1
+    
+    #initialize data to 0 and get sub numbers above 500k
+    percentageAboveValue = 0 
+    cur.execute("SELECT subscribers FROM NapsterTopArtists WHERE subscribers >=?", (500000,))
+    subscriber_data = cur.fetchall()
+
+    for x in subscriber_data:
+        percentageAboveValue += 1
+
+    percentageBelowValue = total_artists - percentageAboveValue 
+
+    #define parameters for piechart 
+    sizes = [percentageAboveValue, percentageBelowValue] 
+    labels = ["Above 500k subs", "Below 500k subs"]
+    colors = ["blue", "red"]
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
+    #equal aspect ratio makes sure pie is drawn as a circle 
+    ax1.axis('equal') 
+    
+    plt.show()
+
+
 
 
 """
@@ -160,7 +201,7 @@ def main():
         # please edit if you are using them! Thanks :)
     
     setup.setUp() 
-    # calculations.calculate()
+    calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
