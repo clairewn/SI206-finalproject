@@ -84,9 +84,14 @@ def topTrackForArtist(cur, conn):
 
     cur.execute("SELECT COUNT (*) FROM TopTracks")
     total_tracks = cur.fetchone()[0]
-    all_artists = all_artists[total_tracks:]
+    check_artists = all_artists[total_tracks:]
 
-    for name in all_artists:
+    for name in check_artists:
+        check_url = "SELECT COUNT(*) from TopTracks WHERE artist_id={}"
+        format_check = check_url.format(name[1])
+        cur.execute(format_check)
+        if cur.fetchone()[0] != 0:
+            continue
         #replaces the spaces in names with '+' for Itunes API term
         person = name[0].replace(" ", "+")
         #search for the content with full URL w/ correct parameter keys (escapes & character in artist name)

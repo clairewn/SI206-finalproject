@@ -10,7 +10,7 @@ import numpy as np
 
 """
 Histogram 1
-Summary of subscriber counts for top 10 artists by genre (only top 10)
+Summary of subscriber counts for top 10 artists by genre 
 """
 
 def histogram1(cur,conn):
@@ -141,8 +141,8 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    setup.setUp() 
-    #calculations.calculate()
+    # setup.setUp() 
+    calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
