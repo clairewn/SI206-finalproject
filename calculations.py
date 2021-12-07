@@ -1,34 +1,37 @@
 import sqlite3
+import os
 
-"""
-Calculate average song lengths for each of the top 100 artists
-Use NapsterTopArtists and only get the most recent 100
-Request track information and average the track lengths for each artist
-Returns the average song length
-"""
-def average_song_length():
-    pass
-
-"""
-Calculate sum of play counts for top 10 artists in each genre 
-(only for top 10 genres)
-Return the sum play count
-"""
-def sum_play_counts():
-    pass
-
-"""
-Calculate sum play counts for each of the top 100 artists
-Use NapsterTopArtists table
-Returns the sum play count
-"""
-def sum_play_count_napster():
-    return 0
+def average_viewcount_per_genre(cur):
+    # file to store calculated data
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'viewcount.txt')
+    outfile = open(full_path,'w', encoding='utf-8')
+    
+    # calculate data
+    cur.execute("SELECT table_id, genre FROM Genres")
+    genres = cur.fetchall()
+    data = []
+    for genre in genres:
+        cur.execute("""
+        SELECT SUM(view_count), COUNT(view_count)
+        FROM TopTracks
+        JOIN NapsterTopArtists
+        ON NapsterTopArtists.artist_id = TopTracks.artist_id
+        WHERE NapsterTopArtists.genre_id = ?
+        """, (genre[0],))
+        sum_count = cur.fetchall()
+        average = sum_count[0][0] / sum_count[0][1]
+        write = genre[1] + " " + str(average) + "\n"
+        outfile.write(write)
+    
+    # outfile.write(str(data))
+    outfile.close()
 
 """
 Main function for this file, calls all function to calculate data and store into database
 """
 def calculate():
-    sum_play_counts()
-    average_song_length()
-    sum_play_count_napster()
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+'music.db')
+    cur = conn.cursor()
+    average_viewcount_per_genre(cur)
