@@ -11,7 +11,6 @@ def average_song_length():
 
 """
 Calculate sum of play counts for top 10 artists in each genre 
-(only for top 10 genres)
 Return the sum play count
 """
 def sum_play_counts():
