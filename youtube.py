@@ -71,3 +71,4 @@ def viewcount_for_track(songName):
     data2 = r2.text
     json_data2 = json.loads(data2)
     return int(json_data2['items'][0]['statistics']['viewCount'])
+
