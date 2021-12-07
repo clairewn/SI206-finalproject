@@ -171,7 +171,5 @@ def setUp():
     num = str(round)
     outfile.write(num)
     outfile.close()
-    
-setUp()
 
-#setUp() - if just run this setup.py to test 
+# setUp()

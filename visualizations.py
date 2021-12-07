@@ -160,19 +160,17 @@ def main():
         # please edit if you are using them! Thanks :)
     
     setup.setUp() 
-    calculations.calculate()
+    # calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
 
-    path = os.path.dirname(os.path.abspath(__file__))
-    conn = sqlite3.connect(path+'/'+'music.db')
-    cur = conn.cursor()
+    # path = os.path.dirname(os.path.abspath(__file__))
+    # conn = sqlite3.connect(path+'/'+'music.db')
+    # cur = conn.cursor()
     #histogram1(cur, conn)
     # youtube_extra(cur,conn)
-    scatterplot(cur)
-
-
+    # scatterplot(cur)
 
     return 0
 

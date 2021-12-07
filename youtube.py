@@ -21,11 +21,15 @@ Usable API keys (each can only populate 100 rows (whether for the artist subscri
 - "AIzaSyCGlIVEN7iVD5iN6RQ4ZEXuRxrPiUrcm9M"
 - "AIzaSyCjL4AEScFAEb5648wstv4bf-z-w_GlPYk"
 - "AIzaSyDdWPcix3qiQZVPg9Mx2GXwHkoIiewK9dE"
+- "AIzaSyDQ7NWSHSPiOxPUaVymeEyyzDsKW77ZszQ"
+- "AIzaSyC0r1-0UY3BE7R8aMj2QdQKq0f6WZG3UGs"
+- "AIzaSyBZIcPo1Y8-WO12MmXGXGU9i7AL7aU_0H0"
+- "AIzaSyAiboHaXZEj7R6WlSb34Wit70-5oZKQUt8"
 
 """
 
 def subscribers_for_artist(artist):
-    youtube_key = "AIzaSyBsNg0E7ou3RnjRxs_JuI4H0ZPUfJRWDCM"
+    youtube_key = "AIzaSyBZIcPo1Y8-WO12MmXGXGU9i7AL7aU_0H0"
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=channel&q={}&key={}"
     request_url = base_url.format(artist,youtube_key)
     r = requests.get(request_url)
@@ -48,7 +52,7 @@ def subscribers_for_artist(artist):
     return int(json_data2["items"][0]["statistics"]["subscriberCount"])
 
 def viewcount_for_track(songName):
-    youtube_key = "AIzaSyBsNg0E7ou3RnjRxs_JuI4H0ZPUfJRWDCM"
+    youtube_key = "AIzaSyBZIcPo1Y8-WO12MmXGXGU9i7AL7aU_0H0"
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=video&q={}&key={}"
     request_url = base_url.format(songName, youtube_key)
     r = requests.get(request_url)
