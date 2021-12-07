@@ -152,7 +152,9 @@ def percentageOfPopularChannels(cur, conn):
     colors = ["blue", "red"]
 
     fig1, ax1 = plt.subplots()
+    ax1.set(title="Percentage of Top Artists with over 500k Youtube Subscribers")
     ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.legend(title="Key:")
     #equal aspect ratio makes sure pie is drawn as a circle 
     ax1.axis('equal') 
     

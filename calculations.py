@@ -22,6 +22,7 @@ def average_subscribers_per_genre(cur):
         write = genre[1] + " " + str(average) + "\n"
         outfile.write(write)
     outfile.close()
+    
 
 def average_viewcount_per_genre(cur):
     # file to store calculated data
@@ -57,5 +58,6 @@ def calculate():
     
     average_subscribers_per_genre(cur)
     average_viewcount_per_genre(cur)
+
     
     
