@@ -165,44 +165,6 @@ def percentageOfPopularChannels(cur, conn):
 Scatterplot
 Subscribers vs. View Count of Top Video for each artist
 """
-def scatterplot_data(cur):
-    cur.execute("""
-    SELECT artist_id, view_count
-    FROM TopTracks
-    """)
-    tracks = cur.fetchall()
-
-    scatterplot_data = {}
-
-    for track in tracks:
-        cur.execute("""
-        SELECT subscribers, genre_id
-        FROM NapsterTopArtists
-        WHERE artist_id = ?
-        """, (track[0],))
-        subscribers_num = cur.fetchone()
-
-        view_count = (track[1])
-        subscribers = (subscribers_num[0])
-        
-        cur.execute("""
-        SELECT genre
-        FROM Genres
-        WHERE table_id = ?
-        """, (subscribers_num[1],))
-        genre_id = cur.fetchone()[0]
-
-        if genre_id not in scatterplot_data:
-            scatterplot_data[genre_id] = {"view_count": [], "subscribers": []}
-        scatterplot_data[genre_id]["view_count"].append(view_count)
-        scatterplot_data[genre_id]["subscribers"].append(subscribers)
-    
-    # file to store calculated data
-    path = os.path.dirname(os.path.abspath(__file__))
-    full_path = os.path.join(path, 'scatterplot_data.json')
-    with open(full_path, 'w') as outfile:
-        json.dump(scatterplot_data, outfile)
-
 def scatterplot():
     path = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.join(path, 'scatterplot_data.json')
@@ -220,14 +182,13 @@ def scatterplot():
         ax.scatter(x, y, c=colormap[count], label=key, alpha=0.5)
         count += 1
     ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0)
+    ax.set(xlabel='View Count', ylabel='Subscribers', \
+        title='View Count vs. Subscribers')
     fig.tight_layout()
     plt.show()
 
 
 def main():
-    # (Ceciel: I commented out these below when I was testing my graphs,
-        # since I was trying to slow down the processing time (only using the existing data)
-        # please edit if you are using them! Thanks :)
     
     # setup.setUp() 
     # calculations.calculate()

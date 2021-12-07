@@ -73,7 +73,43 @@ def average_viewcount_per_genre(cur):
 
     outfile.close()
 
+def scatterplot_data(cur):
+    cur.execute("""
+    SELECT artist_id, view_count
+    FROM TopTracks
+    """)
+    tracks = cur.fetchall()
 
+    scatterplot_data = {}
+
+    for track in tracks:
+        cur.execute("""
+        SELECT subscribers, genre_id
+        FROM NapsterTopArtists
+        WHERE artist_id = ?
+        """, (track[0],))
+        subscribers_num = cur.fetchone()
+
+        view_count = (track[1])
+        subscribers = (subscribers_num[0])
+        
+        cur.execute("""
+        SELECT genre
+        FROM Genres
+        WHERE table_id = ?
+        """, (subscribers_num[1],))
+        genre_id = cur.fetchone()[0]
+
+        if genre_id not in scatterplot_data:
+            scatterplot_data[genre_id] = {"view_count": [], "subscribers": []}
+        scatterplot_data[genre_id]["view_count"].append(view_count)
+        scatterplot_data[genre_id]["subscribers"].append(subscribers)
+    
+    # file to store calculated data
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'scatterplot_data.json')
+    with open(full_path, 'w') as outfile:
+        json.dump(scatterplot_data, outfile)
 
 """
 Main function for this file, calls all functions to calculate data and store into database
@@ -85,6 +121,7 @@ def calculate():
     
     average_subscribers_per_genre(cur)
     average_viewcount_per_genre(cur)
+    scatterplot_data(cur)
 
 # calculate()
     
