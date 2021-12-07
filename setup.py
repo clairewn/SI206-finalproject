@@ -93,9 +93,9 @@ def topTrackForArtist(cur, conn):
         if cur.fetchone()[0] != 0:
             continue
         #replaces the spaces in names with '+' for Itunes API term
-        dude = name[0].replace(" ", "+")
+        person = name[0].replace(" ", "+")
         #search for the content with full URL w/ correct parameter keys (escapes & character in artist name)
-        request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(dude.replace("&", "%26"))
+        request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(person.replace("&", "%26"))
         print(request_url)
         #get data from API 
         response = requests.get(request_url)
@@ -169,5 +169,7 @@ def setUp():
     num = str(round)
     outfile.write(num)
     outfile.close()
+
+
 
 #setUp() - if just run this setup.py to test 
