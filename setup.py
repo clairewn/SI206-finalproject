@@ -4,11 +4,14 @@ import json
 import requests
 import youtube
 
+
 """
-Creates the Genres Table
-Uses Napster API
-23 total genres
+Takes in the database cursor and connection as inputs.
+Returns: None
+Creates the Genres Table we will utilize to obtain more data.
+Uses Napster API to get 23 total genres.
 """
+
 def obtain_genres(cur, conn):
     response = requests.get('https://api.napster.com/v2.0/genres?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm')
     r = response.text
@@ -29,9 +32,14 @@ def obtain_genres(cur, conn):
 
     
 """
-Creates or adds to the NapsterTopArtists Table
-Uses Napster and Youtube API
+Takes in the database cursor and connection as inputs.
+Returns: None
+Creates & adds to the NapsterTopArtists Table.
+Uses Napster API to get reoccuring top artists for genres 
+previously found.
+Uses Youtube API to get # of subscribers for each artist name found. 
 """
+
 def obtain_artists(cur, conn, round):
     cur.execute("SELECT COUNT(*) FROM Genres")
     total_genres = cur.fetchone()[0]
@@ -69,9 +77,13 @@ def obtain_artists(cur, conn, round):
         total_artists = total_artists + 1
         conn.commit()
 
+
 """
-Creates or adds to the TopTracks Table
-Uses ITunes and Youtube API
+Takes in the database cursor and connection as inputs. 
+Creates & adds to the TopTracks Table in .db.
+Uses ITunes API to search for top artist
+names from NapsterTopArtists and retrieves their top song,
+music video view count, song price, and length of song. 
 """
     
 def topTrackForArtist(cur, conn):
@@ -80,14 +92,13 @@ def topTrackForArtist(cur, conn):
     cur.execute("SELECT name, artist_id FROM NapsterTopArtists")
     all_artists = cur.fetchall()
 
-    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER)")
+    cur.execute("CREATE TABLE IF NOT EXISTS TopTracks(artist_id INTEGER, top_track TEXT, view_count INTEGER, track_price INTEGER, track_length INTEGER)")
 
     cur.execute("SELECT COUNT (*) FROM TopTracks")
     total_tracks = cur.fetchone()[0]
     check_artists = all_artists[total_tracks:]
 
     
-
     for name in check_artists:
         check_url = "SELECT COUNT(*) from TopTracks WHERE artist_id={}"
         format_check = check_url.format(name[1])
@@ -139,18 +150,56 @@ def topTrackForArtist(cur, conn):
         if not found:
             continue
 
+
         viewCount = youtube.viewcount_for_track(track)
         if viewCount == None:
+            continue 
+
+ 
+        request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
+
+        response = requests.get(request_url)
+        if not response.ok:
+            return None
+        r = response.text
+        data = json.loads(r)
+
+        if found == False:
+            return None
+        for i in data["results"]:
+            if i["wrapperType"] == "track":
+                price = i['trackPrice']
+                found = True
+                break
+        if not found:
             continue
 
-        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count) VALUES (?, ?, ?)", (name[1], track, viewCount))
+
+        request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
+
+        response = requests.get(request_url)
+        if not response.ok:
+            return None
+        r = response.text 
+        data = json.loads(r)
+
+        if found == False:
+            return None 
+        for i in data["results"]:
+            if i["wrapperType"] == "track":
+                length = i['trackTimeMillis']
+                found = True
+        if not found:
+            continue 
+
+
+
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
         conn.commit()
 
 
-
-
 """
-Main function for this file, calls all function to collect data and store into databases
+Main function for this file, calls all functions to collect data and store into the music database.
 """
 def setUp():
     path = os.path.dirname(os.path.abspath(__file__))
@@ -173,5 +222,5 @@ def setUp():
     outfile.write(num)
     outfile.close()
 
-# setUp()
+#setUp()
 

@@ -75,7 +75,8 @@ def average_viewcount_per_genre(cur):
     outfile.close()
 
 """
-Calculates percentages for pie charts and groups artists by their number of subscribers
+Calculates percentages for pie charts and groups artists 
+by their number of subscribers. 
 """
 def piechart_data(cur):
     piechart_data = {}
