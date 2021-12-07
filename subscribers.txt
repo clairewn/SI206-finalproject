@@ -1,3 +1,23 @@
-Pop 45100000.0
-Rock 2980000.0
-Alternative 88600.0
+The average number of subscribers for Pop is 24014334.
+The average number of subscribers for Rock is 127834.
+The average number of subscribers for Alternative is 394867.
+The average number of subscribers for Rap/Hip-Hop is 12443334.
+The average number of subscribers for Holiday Music is 6502867.
+The average number of subscribers for Soul/R&B is 4454667.
+The average number of subscribers for Country is 1044667.
+The average number of subscribers for Jazz is 136367.
+The average number of subscribers for Electronic is 20309934.
+The average number of subscribers for Latin is 7367634.
+The average number of subscribers for World is 20737767.
+The average number of subscribers for Reggae is 98200.
+The average number of subscribers for Classical is 4645167.
+The average number of subscribers for Oldies is 30456.
+The average number of subscribers for New Age is 765334.
+The average number of subscribers for Christian/Gospel is 1515000.
+The average number of subscribers for Blues is 166434.
+The average number of subscribers for Folk is 296500.
+The average number of subscribers for Vocal/Easy Listening is 668414.
+The average number of subscribers for Soundtracks is 4345800.
+The average number of subscribers for Children is 2723334.
+The average number of subscribers for Metal is 571334.
+The average number of subscribers for Comedy/Spoken Word is 1339534.

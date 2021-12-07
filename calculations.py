@@ -1,5 +1,13 @@
 import sqlite3
 import os
+import math
+
+"""
+Takes the database cursor as an input. 
+Selects the desired data from the database and  
+writes the results of average number of 
+subscribers for each genre to a .txt file.
+"""
 
 def average_subscribers_per_genre(cur):
     # file to store calculated data
@@ -18,11 +26,21 @@ def average_subscribers_per_genre(cur):
         WHERE NapsterTopArtists.genre_id = ?
         """, (genre[0],))
         sum_count = cur.fetchall()
+        #round total average to whole integer
         average = sum_count[0][0] / sum_count[0][1]
-        write = genre[1] + " " + str(average) + "\n"
+        average = math.ceil(average)
+        
+        write = "The average number of subscribers for " + genre[1] + " is " + str(average) + "." + "\n"
         outfile.write(write)
+        
     outfile.close()
     
+"""
+Takes the database cursor as an input. 
+Selects the desired data from the database and  
+writes the results of average number of 
+view counts for each genre to a .txt file.
+"""
 
 def average_viewcount_per_genre(cur):
     # file to store calculated data
@@ -44,12 +62,13 @@ def average_viewcount_per_genre(cur):
         """, (genre[0],))
         sum_count = cur.fetchall()
         average = sum_count[0][0] / sum_count[0][1]
-        write = genre[1] + " " + str(average) + "\n"
+        average = math.ceil(average)
+        write = "The average number of view counts for " + genre[1] + " is " + str(average) + "." + "\n"
         outfile.write(write)
     outfile.close()
 
 """
-Main function for this file, calls all function to calculate data and store into database
+Main function for this file, calls all functions to calculate data and store into database
 """
 def calculate():
     path = os.path.dirname(os.path.abspath(__file__))
@@ -59,5 +78,5 @@ def calculate():
     average_subscribers_per_genre(cur)
     average_viewcount_per_genre(cur)
 
-    
+calculate()
     
