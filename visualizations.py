@@ -129,11 +129,29 @@ def histogram2():
 
 """
 Scatterplot
-Average song length vs. sum of play count for each artist
+Subscribers vs. View Count of Top Video for each artist
 Top 100 artists
 """
-def scatterplot():
-    pass
+def scatterplot(cur):
+    cur.execute("""
+    SELECT artist_id, viewcount
+    FROM TopTracks
+    """)
+    tracks = cur.fetchall()
+
+    view_count = []
+    subscribers = []
+
+    for track in tracks:
+        cur.execute("""
+        SELECT subscribers
+        FROM NapsterTopArtists
+        WHERE artist_id = ?
+        """, (track[0],))
+        subscribers_num = cur.fetchone()[0]
+
+        view_count.append(track[1])
+        subscribers.append(subscribers_num)
 
 
 def main():
@@ -152,6 +170,7 @@ def main():
     cur = conn.cursor()
     #histogram1(cur, conn)
     # youtube_extra(cur,conn)
+    scatterplot(cur)
 
 
 
