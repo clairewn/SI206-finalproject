@@ -3,30 +3,35 @@ import sqlite3
 import os
 import numpy as np
 import json
+import re
 
 
 """
 Histogram 1
-Summary of subscriber counts for top 10 artists by genre 
+Average of subscriber counts per artist in each genre 
 """
 
-def histogram1(cur,conn):
-    command = """
-        SELECT SUM(Subscribers.subscriber_count), Genres.genre
-        FROM Subscribers 
-        JOIN NapsterTopArtists ON Subscribers.artistName = NapsterTopArtists.name
-        JOIN Genres ON Genres.genre_id = NapsterTopArtists.genre
-        GROUP BY Genres.genre;
-        
-    """
+def histogram1():
     
-    cur.execute(command)
-    list_of_genre_tuples = cur.fetchall()
     genre_names = []
     subscribers_sum = []
-    for item in list_of_genre_tuples:
-        genre_names.append(item[1]) #these are the keys
-        subscribers_sum.append(item[0])
+    
+    file_obj = open("subscribers.txt", 'r')
+
+    # read in each line of the file to a list
+    raw_data = file_obj.readlines()
+    file_obj.close()
+
+    for line in raw_data:
+        
+        genre_regex = list(re.findall("(^\w.*?)\d", line))
+        count_regex = list(re.findall("\d+", line))
+        genre = genre_regex[0].strip()
+        count = int(count_regex[0])
+
+        genre_names.append(genre)
+        subscribers_sum.append(count)
+        
 
     fig, ax = plt.subplots(figsize=(8,7))
 
@@ -39,7 +44,7 @@ def histogram1(cur,conn):
 
     ax.autoscale_view()
     ax.set(xlabel='Genres', ylabel='Average Subscriber Count', \
-        title='Average Subscriber Count per Genre')
+        title='Average Subscriber Count of Top Artists per Genre')
     ax.grid()
     fig.tight_layout()
 
@@ -52,65 +57,51 @@ def histogram1(cur,conn):
     plt.show()
 
 
+
 """
 Histogram (extra visualization)
-Summary of view counts for top 10 music videos from each genre 
+Average of view counts per artist in each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
 
-def youtube_extra(cur,conn):
-    #first - get a list of unique tuples (artistName, trackName)
-
-    command = "SELECT DISTINCT name, top_track FROM TopTracks"
-    cur.execute(command)
-    list_of_artist_songs = cur.fetchall()
-    #print(list_of_artist_songs)
-
-    #next - get the genre of this track (artistName, trackName)
-    d = {}
-    command2 = "SELECT Genres.genre FROM Genres JOIN NapsterTopArtists ON Genres.genre_id = NapsterTopArtists.genre WHERE NapsterTopArtists.name = (?)"
-    #command2 = "SELECT genre FROM NapsterTopArtists WHERE name = '{}'"
+def youtube_extra():
     
+    file_obj = open("viewcount.txt", 'r')
+    genre_names = []
+    viewcount_avg = []
 
-    for pair in list_of_artist_songs:
-        artistName = pair[0]
-        command_two = command2.format(artistName)
-        print(command_two)
-        cur.execute(command2,(artistName,))
-        result = cur.fetchone()[0] #- this would be the genre ID
+    # read in each line of the file to a list
+    raw_data = file_obj.readlines()
+    file_obj.close()
 
-        print(result)
+    for line in raw_data:
+        
+        genre_regex = list(re.findall("(^\w.*?)\d", line))
+        viewcount_regex = list(re.findall("\d+", line))
+        genre = genre_regex[0].strip()
+        viewcount = int(viewcount_regex[0])
 
-        songName = pair[1]
-        #command_three = "SELECT view_count FROM ViewCount WHERE song_name = ("%s")" %(songName)
-        cur.execute('SELECT view_count FROM ViewCount WHERE song_name = \"{}\"'.format(songName))
-        this_song_count = int(cur.fetchone()[0]) #- this would be the view count
+        genre_names.append(genre)
+        viewcount_avg.append(viewcount)
 
-        if result not in d:
-            d[result] = this_song_count
-        else:
-            d[result] = d[result] + this_song_count
-    
-    genres = list(d.keys())
-    view_count_sum = list(d.values())
 
     fig, ax = plt.subplots(figsize=(8,7))
 
-    N = len(genres)
+    N = len(genre_names)
     width = 0.35
     ind = np.arange(N)
-    p1 = ax.bar(ind, view_count_sum, width, color='blue')
+    p1 = ax.bar(ind, viewcount_avg, width, color='blue')
     ax.set_xticks(ind)
-    ax.set_xticklabels(genres, fontsize=10, rotation='vertical')
+    ax.set_xticklabels(genre_names, fontsize=10, rotation='vertical')
 
     ax.autoscale_view()
-    ax.set(xlabel='Genres', ylabel='Sum Play Counts of Top 10 Songs', \
-        title='Sum of Play Counts of Top Songs in each Genre')
+    ax.set(xlabel='Genres', ylabel='Average Play Counts', \
+        title='Average of Play Counts of Top Songs in each Genre')
     ax.grid()
     fig.tight_layout()
 
-    for i in range(len(view_count_sum)):
-        plt.text(i, view_count_sum[i], view_count_sum[i], fontsize = 5.5, ha = 'center')
+    for i in range(len(viewcount_avg)):
+        plt.text(i, viewcount_avg[i], viewcount_avg[i], fontsize = 5.5, ha = 'center')
 
     #fig.savefig("name.png") - for saving the image
     plt.show()
@@ -193,7 +184,7 @@ def visualizations():
 
     histogram1()
     youtube_extra()
-    percentageOfPopularChannels()
-    scatterplot()
+    # percentageOfPopularChannels()
+    # scatterplot()
 
 visualizations()
