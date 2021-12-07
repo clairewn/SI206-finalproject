@@ -1,7 +1,3 @@
-import setup
-import calculations
-import youtube
-
 import matplotlib.pyplot as plt
 import sqlite3
 import os
@@ -42,8 +38,8 @@ def histogram1(cur,conn):
     ax.set_xticklabels(genre_names, fontsize=10, rotation='vertical')
 
     ax.autoscale_view()
-    ax.set(xlabel='Genres', ylabel='Sum of Subscriber Counts of Top 10 Artists ', \
-        title='Number of subscribers for top artists in each genre')
+    ax.set(xlabel='Genres', ylabel='Average Subscriber Count', \
+        title='Average Subscriber Count per Genre')
     ax.grid()
     fig.tight_layout()
 
@@ -126,29 +122,17 @@ above a value of 500,000 versus below it.
 Visualizes the % of top artists who have a notable
 number of Youtube channel subs. 
 """
-def percentageOfPopularChannels(cur, conn):
+def percentageOfPopularChannels():
 
-    #initialize data
-    total_artists = 0
-    cur.execute("SELECT name FROM NapsterTopArtists")
-
-    #fetch all artist names & loop through it
-    artist_info = cur.fetchall()
-    for i in artist_info:
-        total_artists += 1
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'piechart_data.json')
     
-    #initialize data to 0 and get sub numbers above 500k
-    percentageAboveValue = 0 
-    cur.execute("SELECT subscribers FROM NapsterTopArtists WHERE subscribers >=?", (500000,))
-    subscriber_data = cur.fetchall()
-
-    for x in subscriber_data:
-        percentageAboveValue += 1
-
-    percentageBelowValue = total_artists - percentageAboveValue 
-
     #define parameters for piechart 
-    sizes = [percentageAboveValue, percentageBelowValue] 
+    sizes = []
+    with open(full_path, 'r') as infile:
+        data = json.load(infile)
+        sizes.append(data['percentageAbove'])
+        sizes.append(data['percentageBelow'])
     labels = ["Above 500k subs", "Below 500k subs"]
     colors = ["blue", "red"]
 
@@ -185,28 +169,16 @@ def scatterplot():
     ax.set(xlabel='View Count', ylabel='Subscribers', \
         title='View Count vs. Subscribers')
     fig.tight_layout()
+
+    fig.savefig("scatterplot.png")
     plt.show()
 
 
-def main():
-    
-    # setup.setUp() 
-    # calculations.calculate()
+def visualizations():
 
-    path = os.path.dirname(os.path.abspath(__file__))
-    conn = sqlite3.connect(path+'/'+'music.db')
-    cur = conn.cursor()
-    #histogram1(cur, conn)
-    # youtube_extra(cur,conn)
-    # scatterplot_data(cur)
+    histogram1()
+    youtube_extra()
+    percentageOfPopularChannels()
     scatterplot()
-    # scatterplot_without_pop()
-    #percentageOfPopularChannels()
 
-    return 0
-
-    
-
-if __name__ == "__main__":
-    main()
-
+visualizations()
