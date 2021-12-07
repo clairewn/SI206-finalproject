@@ -173,5 +173,5 @@ def setUp():
     outfile.write(num)
     outfile.close()
 
-setUp()
+# setUp()
 
