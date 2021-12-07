@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import sqlite3
 import os
 import numpy as np
+import json
 
 
 """
@@ -160,41 +161,67 @@ def percentageOfPopularChannels(cur, conn):
     
     plt.show()
 
-
-
-
-"""
-Histogram
-Average song length for top 10 artists by genre (only top 10)
-"""
-def histogram2():
-    pass
-
 """
 Scatterplot
 Subscribers vs. View Count of Top Video for each artist
-Top 100 artists
 """
-def scatterplot(cur):
+def scatterplot_data(cur):
     cur.execute("""
-    SELECT artist_id, viewcount
+    SELECT artist_id, view_count
     FROM TopTracks
     """)
     tracks = cur.fetchall()
 
-    view_count = []
-    subscribers = []
+    scatterplot_data = {}
 
     for track in tracks:
         cur.execute("""
-        SELECT subscribers
+        SELECT subscribers, genre_id
         FROM NapsterTopArtists
         WHERE artist_id = ?
         """, (track[0],))
-        subscribers_num = cur.fetchone()[0]
+        subscribers_num = cur.fetchone()
 
-        view_count.append(track[1])
-        subscribers.append(subscribers_num)
+        view_count = (track[1])
+        subscribers = (subscribers_num[0])
+        
+        cur.execute("""
+        SELECT genre
+        FROM Genres
+        WHERE table_id = ?
+        """, (subscribers_num[1],))
+        genre_id = cur.fetchone()[0]
+
+        if genre_id not in scatterplot_data:
+            scatterplot_data[genre_id] = {"view_count": [], "subscribers": []}
+        scatterplot_data[genre_id]["view_count"].append(view_count)
+        scatterplot_data[genre_id]["subscribers"].append(subscribers)
+    
+    # file to store calculated data
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'scatterplot_data.json')
+    with open(full_path, 'w') as outfile:
+        json.dump(scatterplot_data, outfile)
+
+def scatterplot():
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'scatterplot_data.json')
+    data = {}
+    with open(full_path, 'r') as infile:
+        data = json.load(infile)
+    
+    colormap = ['black', 'rosybrown', 'red', 'sienna', 'darkorange', 'goldenrod', 'gold', 'olive', 'yellow', 'greenyellow', 'palegreen', 'lime', 'teal', 'cyan', 'deepskyblue', 'slategray', 'blue', 'blueviolet', 'mediumorchid', 'violet', 'purple', 'deeppink', 'lightpink']
+
+    fig, ax = plt.subplots()
+    count = 0
+    for key in data:
+        x = data[key]["view_count"]
+        y = data[key]["subscribers"]
+        ax.scatter(x, y, c=colormap[count], label=key, alpha=0.5)
+        count += 1
+    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0)
+    fig.tight_layout()
+    plt.show()
 
 
 def main():
@@ -202,19 +229,17 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    setup.setUp() 
-    youtube.py()
-    calculations.calculate()
-    #histogram1()
-    #histogram2()
-    #scatterplot()
+    # setup.setUp() 
+    # calculations.calculate()
 
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
     #histogram1(cur, conn)
     # youtube_extra(cur,conn)
-    #scatterplot(cur)
+    # scatterplot_data(cur)
+    scatterplot()
+    # scatterplot_without_pop()
     #percentageOfPopularChannels()
 
     return 0
