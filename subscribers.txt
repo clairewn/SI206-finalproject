@@ -1,0 +1,23 @@
+Pop 34666667
+Rock 1233000
+Alternative 3749434
+Rap/Hip-Hop 2755883
+Holiday Music 23351
+Soul/R&B 4136667
+Country 1079267
+Jazz 216447
+Electronic 8783334
+Latin 1169174
+World 46400
+Reggae 791194
+Classical 4639667
+Oldies 1326000
+New Age 81009
+Christian/Gospel 1837500
+Blues 98050
+Folk 345000
+Vocal/Easy Listening 25195
+Soundtracks 67400
+Children 3
+Metal 744800
+Comedy/Spoken Word 432800
