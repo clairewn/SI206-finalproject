@@ -141,8 +141,8 @@ def main():
         # since I was trying to slow down the processing time (only using the existing data)
         # please edit if you are using them! Thanks :)
     
-    setup.setUp() 
-    #calculations.calculate()
+    # setup.setUp() 
+    calculations.calculate()
     #histogram1()
     #histogram2()
     #scatterplot()
