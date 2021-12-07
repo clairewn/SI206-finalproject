@@ -76,11 +76,11 @@ def average_viewcount_per_genre(cur):
 
 """
 Takes in database cursor. Output is a JSON file displaying
-the average song length on Itunes for each genre. 
+the average price of the top songs for each genre. 
 
-def average_song_length_per_genre(cur):
+def average_price_per_genre(cur):
     path = os.path.dirname(os.path.abspath(__file__))
-    full_path = os.path.join(path, 'songlength.txt')
+    full_path = os.path.join(path, 'songprice.txt')
     outfile = open(full_path,'w', encoding='utf-8')
 
     cur.execute(""
