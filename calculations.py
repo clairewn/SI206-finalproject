@@ -2,6 +2,8 @@ import sqlite3
 import os
 import math
 
+from numpy.lib.function_base import average
+
 """
 Takes the database cursor as an input. 
 Selects the desired data from the database and  
@@ -31,10 +33,9 @@ def average_subscribers_per_genre(cur):
         average = sum_count[0][0] / sum_count[0][1]
         average = math.ceil(average)
         
-        write = "The average number of subscribers for " + genre[1] + " is " + str(average) + "." + "\n"
+        write = genre[1] + " " + str(average) + "\n" 
         outfile.write(write)
-        print(sum_count[0][0])
-        print(sum_count[0][1])
+        
     outfile.close()
     
 """
@@ -56,17 +57,18 @@ def average_viewcount_per_genre(cur):
     
     for genre in genres:
         cur.execute("""
-        SELECT SUM(view_count) AS 'TOTAL', COUNT(view_count) AS 'Occurence', AVG(view_count) AS 'Average View Count'
+        SELECT SUM(subscribers), COUNT(subscribers), AVG(subscribers)
         FROM TopTracks
-        JOIN NapsterTopArtists
+        JOIN NapsterTopArtists 
         ON NapsterTopArtists.artist_id = TopTracks.artist_id
         WHERE NapsterTopArtists.genre_id = ?
         """, (genre[0],))
 
         sum_count = cur.fetchall()
-        
+        average = sum_count[0][0] / sum_count[0][1]
+        average = math.ceil(average)
 
-        write = "The average number of view counts for " + genre[1] + " is " + str(sum_count) + "." + "\n"
+        write = genre[1] + " " + str(average) + "\n"
         outfile.write(write)
 
     outfile.close()
