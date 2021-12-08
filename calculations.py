@@ -24,15 +24,12 @@ def average_subscribers_per_genre(cur):
     
     for genre in genres:
         cur.execute("""
-        SELECT SUM(subscribers), COUNT(subscribers)
+        SELECT AVG(subscribers)
         FROM NapsterTopArtists
         WHERE NapsterTopArtists.genre_id = ?
         """, (genre[0],))
-        sum_count = cur.fetchall()
-        #round total average to whole integer
     
-        average = sum_count[0][0] / sum_count[0][1]
-        average = math.ceil(average)
+        average = cur.fetchone()[0]
         
         write = genre[1] + " " + str(average) + "\n" 
         outfile.write(write)
@@ -66,8 +63,7 @@ def average_viewcount_per_genre(cur):
         """, (genre[0],))
 
         
-        avg_count = cur.fetchall()
-        average = math.ceil(avg_count)
+        average = cur.fetchone()[0]
 
         write = genre[1] + " " + str(average) + "\n"
         outfile.write(write)
@@ -243,12 +239,12 @@ def calculate():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
     
-    #average_subscribers_per_genre(cur)
-    #average_viewcount_per_genre(cur)
+    average_subscribers_per_genre(cur)
+    average_viewcount_per_genre(cur)
     average_price_per_genre(cur)
     average_length_per_genre(cur)
-    #piechart_data(cur) **need Youtube data!! ASAP 
-    #scatterplot_data(cur)
+    piechart_data(cur) 
+    scatterplot_data(cur)
 
 calculate()
     

@@ -1,23 +1,23 @@
-Pop 236776.8
-Rock 222556.2
-Alternative 216893.0
-Rap/Hip-Hop 252149.2
-Holiday Music 202477.2
-Soul/R&B 207590.25
-Country 227741.0
-Jazz 238973.25
+Pop 243158.25
+Rock 231922.0
+Alternative 214029.25
+Rap/Hip-Hop 231724.25
+Holiday Music 199369.75
+Soul/R&B 210978.0
+Country 234143.0
+Jazz 190316.0
 Electronic 201538.0
-Latin 214886.0
-World 236989.67
+Latin 206449.25
+World 254324.67
 Reggae 207700.5
 Classical 333149.0
 Oldies 240840.25
 New Age 307702.33
-Christian/Gospel 261433.25
-Blues 384606.25
+Christian/Gospel 273833.25
+Blues 423017.33
 Folk 203275.67
 Vocal/Easy Listening 177460.0
-Soundtracks 192977.0
-Children 201534.0
+Soundtracks 240852.0
+Children 160990.5
 Metal 286597.0
-Comedy/Spoken Word 218323.0
+Comedy/Spoken Word 237726.5

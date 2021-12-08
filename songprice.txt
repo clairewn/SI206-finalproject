@@ -4,8 +4,8 @@ Alternative $1.29
 Rap/Hip-Hop $1.29
 Holiday Music $1.29
 Soul/R&B $1.29
-Country $1.23
-Jazz $1.22
+Country $1.22
+Jazz $1.19
 Electronic $1.29
 Latin $1.29
 World $1.29

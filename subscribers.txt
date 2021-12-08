@@ -1,23 +1,23 @@
-Pop 34666667
-Rock 1233000
-Alternative 3749434
-Rap/Hip-Hop 2755883
-Holiday Music 23351
-Soul/R&B 4136667
-Country 1079267
-Jazz 216447
-Electronic 8783334
-Latin 1169174
-World 46400
-Reggae 791194
-Classical 4639667
-Oldies 1326000
-New Age 81009
-Christian/Gospel 1837500
-Blues 98050
-Folk 345000
-Vocal/Easy Listening 25195
-Soundtracks 67400
-Children 3
-Metal 744800
-Comedy/Spoken Word 432800
+Pop 21802750.0
+Rock 944575.0
+Alternative 5502150.0
+Rap/Hip-Hop 9474250.0
+Holiday Music 4885825.25
+Soul/R&B 6366000.0
+Country 1361777.0
+Jazz 418275.0
+Electronic 16572450.0
+Latin 10704250.0
+World 15553325.0
+Reggae 78490.5
+Classical 6733900.0
+Oldies 685775.0
+New Age 574004.25
+Christian/Gospel 1943750.0
+Blues 166766.66666666666
+Folk 296833.3333333333
+Vocal/Easy Listening 679266.6666666666
+Soundtracks 4345800.0
+Children 1838667.3333333333
+Metal 3138666.6666666665
+Comedy/Spoken Word 1692866.6666666667
