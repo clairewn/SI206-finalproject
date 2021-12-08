@@ -8,7 +8,7 @@ from numpy.lib.function_base import average
 """
 Takes the database cursor as an input. 
 Selects the desired data from the database and  
-writes the results of average number of 
+writes the results of the average number of 
 subscribers for each genre to a .txt file.
 """
 
@@ -58,15 +58,15 @@ def average_viewcount_per_genre(cur):
     
     for genre in genres:
         cur.execute("""
-        SELECT SUM(subscribers), COUNT(subscribers), AVG(subscribers)
+        SELECT AVG(view_count)
         FROM TopTracks
         JOIN NapsterTopArtists 
         ON NapsterTopArtists.artist_id = TopTracks.artist_id
         WHERE NapsterTopArtists.genre_id = ?
         """, (genre[0],))
 
-        sum_count = cur.fetchall()
-        average = sum_count[0][0] / sum_count[0][1]
+        
+        average = cur.fetchall()
         average = math.ceil(average)
 
         write = genre[1] + " " + str(average) + "\n"
@@ -77,22 +77,44 @@ def average_viewcount_per_genre(cur):
 """
 Takes in database cursor. Output is a JSON file displaying
 the average price of the top songs for each genre. 
+"""
 
 def average_price_per_genre(cur):
+
+    # file to store calculated data
     path = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.join(path, 'songprice.txt')
     outfile = open(full_path,'w', encoding='utf-8')
 
-    cur.execute(""
+    #calculate data by selecting genres first
+    cur.execute("SELECT table_id, genre FROM Genres")
+    genres = cur.fetchall()
 
-    
+    #iterate through to get the average of track_price column
+    for genre in genres:
+        cur.execute("""
+        SELECT AVG(track_price)
+        FROM TopTracks
+        JOIN NapsterTopArtists 
+        ON NapsterTopArtists.artist_id = TopTracks.artist_id
+        WHERE NapsterTopArtists.genre_id = ?
+        """, (genre[0],))
+
+        #write results to .txt file
+        average = cur.fetchall()
+        write = genre[1] + " " + str(average) + "\n"
+        outfile.write(write)
+
+    outfile.close()
+
+
+"""
+Calculates percentages for pie charts and then groups 
+artists by their number of subscribers. Results written
+to a .json file displaying the % of artists with above
+500k Youtube subscribers. 
 """
 
-
-"""
-Calculates percentages for pie charts and groups artists 
-by their number of subscribers. 
-"""
 def piechart_data(cur):
     piechart_data = {}
     #initialize data
@@ -123,10 +145,13 @@ def piechart_data(cur):
     with open(full_path, 'w') as outfile:
         json.dump(piechart_data, outfile)
 
+
 """
-Collects data points for the scatterplot
+Collects data points for the Scatterplot. 
 Gets view count and subscriber count for each artist
+and compares the data results. 
 """
+
 def scatterplot_data(cur):
     cur.execute("""
     SELECT artist_id, view_count
@@ -166,7 +191,7 @@ def scatterplot_data(cur):
         json.dump(scatterplot_data, outfile)
 
 """
-Main function for this file, calls all functions to calculate data and store into database
+Main function for this file, calls all functions to calculate data and store into database.
 """
 def calculate():
     path = os.path.dirname(os.path.abspath(__file__))
@@ -174,7 +199,8 @@ def calculate():
     cur = conn.cursor()
     
     # average_subscribers_per_genre(cur)
-    # average_viewcount_per_genre(cur)
+    average_viewcount_per_genre(cur)
+    average_price_per_genre(cur)
     piechart_data(cur)
     # scatterplot_data(cur)
 

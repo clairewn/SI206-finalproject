@@ -184,7 +184,7 @@ def visualizations():
 
     histogram1()
     youtube_extra()
-    # percentageOfPopularChannels()
+    #percentageOfPopularChannels()
     # scatterplot()
 
 visualizations()
