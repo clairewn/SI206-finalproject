@@ -8,8 +8,9 @@ import re
 
 """
 Histogram 1
-Displays the average of subscriber counts per artist in 
-each genre, calculated in calculations.py 
+Displays the average of subscriber counts for the 
+top artists in each genre calculated in calculations.py 
+and written to a .txt file beforehand.
 """
 
 def histogram1():
