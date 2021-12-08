@@ -112,6 +112,45 @@ def average_price_per_genre(cur):
 
     outfile.close()
 
+"""
+Takes in database cursor. Output is a JSON file displaying
+the average length of the top songs for each genre. 
+"""
+
+def average_length_per_genre(cur):
+
+    # file to store calculated data
+    path = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(path, 'songlength.txt')
+    outfile = open(full_path,'w', encoding='utf-8')
+
+    #calculate data by selecting genres first
+    cur.execute("SELECT table_id, genre FROM Genres")
+    genres = cur.fetchall()
+
+    #iterate through to get the average of track_length column
+    for genre in genres:
+        cur.execute("""
+        SELECT AVG(track_length)
+        FROM TopTracks
+        JOIN NapsterTopArtists 
+        ON NapsterTopArtists.artist_id = TopTracks.artist_id
+        WHERE NapsterTopArtists.genre_id = ?
+        """, (genre[0],))
+
+        #write results to .txt file
+        average = cur.fetchall()
+        
+        for x in average:
+            x = x[0]
+            x = round(x, 2)
+
+        #values are in milliseconds 
+        write = genre[1] + " " + str(x) + "\n"
+        outfile.write(write)
+
+    outfile.close()
+
 
 """
 Calculates percentages for pie charts and then groups 
@@ -207,6 +246,7 @@ def calculate():
     #average_subscribers_per_genre(cur)
     #average_viewcount_per_genre(cur)
     average_price_per_genre(cur)
+    average_length_per_genre(cur)
     #piechart_data(cur)
     #scatterplot_data(cur)
 
