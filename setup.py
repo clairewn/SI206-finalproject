@@ -50,8 +50,12 @@ def obtain_artists(cur, conn, round):
     total_artists = cur.fetchone()[0]
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
-    for genre in range(0, total_genres):
+    #for g in range(0, 25):
         # obtain genre id
+        #genre = total_artists % total_genres (gets 25 items)
+    
+    for genre in range(0, total_genres):
+
         genre_id = genre + 1
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
@@ -64,6 +68,7 @@ def obtain_artists(cur, conn, round):
         r = response.text
         data = json.loads(r)
 
+        
         # select artist
         artist = data['artists'][int(round)]
 
@@ -111,9 +116,9 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/search?term={}&entity=musicArtist&limit=10'.format(person.replace("&", "%26"))
         #get data from API 
         response = requests.get(request_url)
-        if response.status_code != 200:
-            # TODO: delete from original table?
-            continue
+        if not response.ok:
+            return None
+            
         r = response.text
         data = json.loads(r)
         
@@ -135,9 +140,8 @@ def topTrackForArtist(cur, conn):
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
         
         response = requests.get(request_url)
-        if response.status_code != 200:
-            # TODO: delete from original table?
-            continue
+        if not response.ok:
+            return None
         r = response.text
         data = json.loads(r)
 
@@ -171,7 +175,7 @@ def topTrackForArtist(cur, conn):
                 found = True
                 break
         if not found:
-            continue
+            price = 0 # CHANGED THIS
 
 
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
@@ -188,7 +192,7 @@ def topTrackForArtist(cur, conn):
                 length = i['trackTimeMillis']
                 found = True
         if not found:
-            continue 
+            length = 0 # CHANGED THIS
 
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
@@ -219,6 +223,6 @@ def setUp():
     outfile.write(num)
     outfile.close()
 
-setUp()
+setUp() 
 
 
