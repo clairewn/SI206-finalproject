@@ -88,7 +88,7 @@ def obtain_artists(cur, conn, round):
             print("no subscribers")
             continue
 
-        print(subscribers)
+        #print(subscribers)
         
         cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
         total_artists = total_artists + 1
@@ -208,7 +208,7 @@ def topTrackForArtist(cur, conn):
         if viewCount == None:
             print("no viewcount")
             continue
-        print(viewCount)
+        #print(viewCount)
 
         cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
         conn.commit()
