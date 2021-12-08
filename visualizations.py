@@ -175,7 +175,7 @@ def extra_histogram():
     ax.set_xticklabels(genre_names, fontsize=9, rotation='vertical')
 
     ax.autoscale_view()
-    ax.set(xlabel='Genres', ylabel='Average Song Length', \
+    ax.set(xlabel='Genres', ylabel='Average Song Length (Milliseconds', \
         title='Average Length of Top Songs for each Genre')
     ax.grid()
     fig.tight_layout()
