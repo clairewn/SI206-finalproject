@@ -8,7 +8,9 @@ import re
 
 """
 Histogram 1
-Average of subscriber counts per artist in each genre 
+Displays the average of subscriber counts for the 
+top artists in each genre calculated in calculations.py 
+and written to a .txt file beforehand.
 """
 
 def histogram1():
@@ -59,7 +61,7 @@ def histogram1():
 
 
 """
-Histogram (extra visualization)
+Histogram (extra)
 Average of view counts per artist in each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
@@ -170,7 +172,7 @@ def visualizations():
 
     # histogram1()
     youtube_extra()
-    # percentageOfPopularChannels()
+    #percentageOfPopularChannels()
     # scatterplot()
 
 visualizations()

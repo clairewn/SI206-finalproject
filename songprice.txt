@@ -1,0 +1,23 @@
+Pop $1.29
+Rock $1.29
+Alternative $1.29
+Rap/Hip-Hop $1.29
+Holiday Music $1.29
+Soul/R&B $1.29
+Country $1.23
+Jazz $1.22
+Electronic $1.29
+Latin $1.29
+World $1.29
+Reggae $1.29
+Classical $0.53
+Oldies $1.29
+New Age $1.29
+Christian/Gospel $1.29
+Blues $1.29
+Folk $1.29
+Vocal/Easy Listening $1.29
+Soundtracks $1.29
+Children $1.29
+Metal $1.29
+Comedy/Spoken Word $1.29
