@@ -50,17 +50,17 @@ def obtain_artists(cur, conn, round):
     cur.execute("SELECT COUNT (*) FROM NapsterTopArtists")
     total_artists = cur.fetchone()[0]
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
-
     
-    for genre in range(0, total_genres):
 
+    for g in range(0, 25):
+        genre = total_artists % total_genres  
+    
         genre_id = genre + 1
+
         request_str = "SELECT genre_id from Genres where table_id={}"
         format_str = request_str.format(str(genre_id))
         cur.execute(format_str)
         genre_id = cur.fetchone()[0]
-
-        
 
         # get desired data from API using genre 
         request_url = base_url.format(genre_id)
@@ -68,25 +68,25 @@ def obtain_artists(cur, conn, round):
         r = response.text
         data = json.loads(r)
 
-
-        
         # select artist
-        artist = data['artists'][int(round)]
+        temp = total_artists
+        count = 0
+        while temp > 22:
+            temp = temp - 23
+            count = count + 1
 
-        
+        artist = data['artists'][int(count)]
 
         table_genre_id = genre + 1
 
-        subscribers = youtube.subscribers_for_artist(artist['name'])
+        """subscribers = youtube.subscribers_for_artist(artist['name'])
         if subscribers is None:
-            continue
-
+            print("no subscribers")
+            continue"""
         
-        
-        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
+        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, 0))
         total_artists = total_artists + 1
         conn.commit()
-
 
 """
 Takes in the database cursor and connection as inputs. 
@@ -175,7 +175,7 @@ def topTrackForArtist(cur, conn):
                 found = True
                 break
         if not found:
-            price = 0 # CHANGED THIS
+            price = 0 
 
 
         request_url = 'https://itunes.apple.com/lookup?amgArtistId={}&entity=song&limit=5'.format(artistid)
@@ -192,14 +192,15 @@ def topTrackForArtist(cur, conn):
                 length = i['trackTimeMillis']
                 found = True
         if not found:
-            length = 0 # CHANGED THIS
+            length = 0 
 
-        viewCount = youtube.viewcount_for_track(track)
+        """viewCount = youtube.viewcount_for_track(track)
         if viewCount == None:
-            continue 
+            print("no viewcount")
+            continue"""
 
 
-        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, 0, price, length))
         conn.commit()
 
 

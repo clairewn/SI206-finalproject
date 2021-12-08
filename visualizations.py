@@ -61,7 +61,7 @@ def histogram1():
 
 
 """
-Histogram (extra visualization)
+Histogram (extra)
 Average of view counts per artist in each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
