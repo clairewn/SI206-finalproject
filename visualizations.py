@@ -55,13 +55,13 @@ def histogram1():
             #plt.text(i, subscribers_sum[i], subscribers_sum[i], ha = 'center')
         plt.text(i, subscribers_sum[i], subscribers_sum[i], fontsize = 5.5, ha = 'center')
 
-    #fig.savefig("name.png") - for saving the image
+    #fig.savefig("histo1.png") - for saving the image
     plt.show()
 
 
 
 """
-Histogram (extra)
+Histogram 2
 Average of view counts per artist in each genre 
 Joining ViewCount, TopTracks, NapsterTopArtist, Genre
 """
@@ -105,7 +105,7 @@ def youtube_extra():
     for i in range(len(viewcount_avg)):
         plt.text(i, viewcount_avg[i], viewcount_avg[i], fontsize = 5.5, ha = 'center')
 
-    #fig.savefig("name.png") - for saving the image
+    #fig.savefig("histo2.png") - for saving the image
     plt.show()
 
 """
@@ -135,9 +135,57 @@ def percentageOfPopularChannels():
     ax1.legend(title="Key:")
     #equal aspect ratio makes sure pie is drawn as a circle 
     ax1.axis('equal') 
-    
+    #fig1.savefig1("piechart.png")
     plt.show()
 
+
+"""
+Histogram (extra visualization)
+Average song length for each genre
+**uses calculation defined in calculations.py and .txt files
+"""
+def extra_histogram():
+    
+    file_obj = open("songlength.txt", 'r')
+    genre_names = []
+    song_length = []
+
+    # read in each line of the file to a list
+    raw_data = file_obj.readlines()
+    file_obj.close()
+
+    for line in raw_data:
+        
+        genre_re = list(re.findall("(^\w.*?)\d", line))
+        song_length_re = list(re.findall("\d+", line))
+        genre = genre_re[0].strip()
+        songLength = int(song_length_re[0])
+
+        genre_names.append(genre)
+        song_length.append(songLength)
+
+
+    fig, ax = plt.subplots(figsize=(8,7))
+
+    N = len(genre_names)
+    width = 0.35
+    ind = np.arange(N)
+    p1 = ax.bar(ind, song_length, width, color='red')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(genre_names, fontsize=9, rotation='vertical')
+
+    ax.autoscale_view()
+    ax.set(xlabel='Genres', ylabel='Average Song Length', \
+        title='Average Length of Top Songs for each Genre')
+    ax.grid()
+    fig.tight_layout()
+
+    for i in range(len(song_length)):
+        plt.text(i, song_length[i], song_length[i], fontsize = 5.6, ha = 'center')
+
+    fig.savefig("extravis.png") 
+    plt.show()
+    
 
 """
 Scatterplot
@@ -170,9 +218,10 @@ def scatterplot():
 
 def visualizations():
 
-    # histogram1()
+    histogram1()
     youtube_extra()
     #percentageOfPopularChannels()
     # scatterplot()
+    extra_histogram()
 
 visualizations()
