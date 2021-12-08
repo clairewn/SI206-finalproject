@@ -66,8 +66,8 @@ def average_viewcount_per_genre(cur):
         """, (genre[0],))
 
         
-        average = cur.fetchall()
-        average = math.ceil(average)
+        avg_count = cur.fetchall()
+        average = math.ceil(avg_count)
 
         write = genre[1] + " " + str(average) + "\n"
         outfile.write(write)
@@ -102,7 +102,12 @@ def average_price_per_genre(cur):
 
         #write results to .txt file
         average = cur.fetchall()
-        write = genre[1] + " " + str(average) + "\n"
+        
+        for x in average:
+            x = x[0]
+            x = round(x, 2)
+
+        write = genre[1] + " " + "$" + str(x) + "\n"
         outfile.write(write)
 
     outfile.close()
@@ -126,7 +131,7 @@ def piechart_data(cur):
     for i in artist_info:
         total_artists += 1
     
-    #initialize data to 0 and get sub numbers above 500k
+    #initialize data 
     percentageAboveValue = 0 
     cur.execute("SELECT subscribers FROM NapsterTopArtists WHERE subscribers >=?", (500000,))
     subscriber_data = cur.fetchall()
@@ -138,6 +143,7 @@ def piechart_data(cur):
 
     piechart_data['percentageAbove'] = percentageAboveValue
     piechart_data['percentageBelow'] = percentageBelowValue 
+    
 
     # file to store calculated data
     path = os.path.dirname(os.path.abspath(__file__))
@@ -198,11 +204,11 @@ def calculate():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
     
-    # average_subscribers_per_genre(cur)
-    average_viewcount_per_genre(cur)
+    #average_subscribers_per_genre(cur)
+    #average_viewcount_per_genre(cur)
     average_price_per_genre(cur)
-    piechart_data(cur)
-    # scatterplot_data(cur)
+    #piechart_data(cur)
+    #scatterplot_data(cur)
 
 calculate()
     
