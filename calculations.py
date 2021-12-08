@@ -243,12 +243,12 @@ def calculate():
     conn = sqlite3.connect(path+'/'+'music.db')
     cur = conn.cursor()
     
-    #average_subscribers_per_genre(cur)
-    #average_viewcount_per_genre(cur)
+    average_subscribers_per_genre(cur)
+    average_viewcount_per_genre(cur)
     average_price_per_genre(cur)
     average_length_per_genre(cur)
-    #piechart_data(cur) **need Youtube data!! ASAP 
-    #scatterplot_data(cur)
+    piechart_data(cur) 
+    scatterplot_data(cur)
 
 calculate()
     
