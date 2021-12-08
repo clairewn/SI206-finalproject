@@ -140,20 +140,6 @@ def percentageOfPopularChannels():
 
 
 """
-Histogram 2 
-Average song length for top 10 artists by genre (only top 10)
-**use either track price or trackmilliseconds in itunes API
-**write in calculations
-"""
-def histogram2():
-    pass
-
-
-
-
-
-
-"""
 Scatterplot
 Subscribers vs. View Count of Top Video for each artist
 """
@@ -184,7 +170,7 @@ def scatterplot():
 
 def visualizations():
 
-    histogram1()
+    # histogram1()
     youtube_extra()
     #percentageOfPopularChannels()
     # scatterplot()
