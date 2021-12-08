@@ -58,7 +58,7 @@ def average_viewcount_per_genre(cur):
     
     for genre in genres:
         cur.execute("""
-        SELECT SUM(subscribers), COUNT(subscribers), AVG(subscribers)
+        SELECT AVG(view_count)
         FROM TopTracks
         JOIN NapsterTopArtists 
         ON NapsterTopArtists.artist_id = TopTracks.artist_id
