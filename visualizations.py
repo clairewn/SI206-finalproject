@@ -55,7 +55,7 @@ def histogram1():
             #plt.text(i, subscribers_sum[i], subscribers_sum[i], ha = 'center')
         plt.text(i, subscribers_sum[i], subscribers_sum[i], fontsize = 5.5, ha = 'center')
 
-    #fig.savefig("histo1.png") - for saving the image
+    fig.savefig("histo1.png") 
     plt.show()
 
 
@@ -105,7 +105,7 @@ def youtube_extra():
     for i in range(len(viewcount_avg)):
         plt.text(i, viewcount_avg[i], viewcount_avg[i], fontsize = 5.5, ha = 'center')
 
-    #fig.savefig("histo2.png") - for saving the image
+    fig.savefig("histo2.png") 
     plt.show()
 
 """
@@ -135,7 +135,7 @@ def percentageOfPopularChannels():
     ax1.legend(title="Key:")
     #equal aspect ratio makes sure pie is drawn as a circle 
     ax1.axis('equal') 
-    #fig1.savefig1("piechart.png")
+    fig1.savefig("piechart.png")
     plt.show()
 
 
@@ -220,8 +220,8 @@ def visualizations():
 
     histogram1()
     youtube_extra()
-    #percentageOfPopularChannels()
-    # scatterplot()
+    percentageOfPopularChannels()
+    scatterplot()
     extra_histogram()
 
 visualizations()
