@@ -29,7 +29,7 @@ Usable API keys (each can only populate 100 rows (whether for the artist subscri
 """
 
 def subscribers_for_artist(artist):
-    youtube_key = "AIzaSyC3r8sWyIFG41Tm6K5p8feroyG8Q4tXHi0"
+    youtube_key = "AIzaSyA6izzamX571VKt-9ok6WONA5Y3vcIsOEY"
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=channel&q={}&key={}"
     request_url = base_url.format(artist,youtube_key)
     r = requests.get(request_url)
@@ -52,7 +52,7 @@ def subscribers_for_artist(artist):
     return int(json_data2["items"][0]["statistics"]["subscriberCount"])
 
 def viewcount_for_track(songName):
-    youtube_key = "AIzaSyC3r8sWyIFG41Tm6K5p8feroyG8Q4tXHi0"
+    youtube_key = "AIzaSyA6izzamX571VKt-9ok6WONA5Y3vcIsOEY"
     base_url = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelType=any&eventType=none&maxResults=5&type=video&q={}&key={}"
     request_url = base_url.format(songName, youtube_key)
     r = requests.get(request_url)

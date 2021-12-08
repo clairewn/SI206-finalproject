@@ -83,13 +83,14 @@ def obtain_artists(cur, conn, round):
 
         table_genre_id = genre + 1
 
-        """subscribers = youtube.subscribers_for_artist(artist['name'])
+        subscribers = youtube.subscribers_for_artist(artist['name'])
         if subscribers is None:
-            continue"""
+            print("no subscribers")
+            continue
 
+        print(subscribers)
         
-        
-        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, 0))
+        cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
         total_artists = total_artists + 1
 
         
@@ -203,12 +204,13 @@ def topTrackForArtist(cur, conn):
         if not found:
             length = 0 # CHANGED THIS
 
-        """viewCount = youtube.viewcount_for_track(track)
+        viewCount = youtube.viewcount_for_track(track)
         if viewCount == None:
-            continue"""
+            print("no viewcount")
+            continue
+        print(viewCount)
 
-
-        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, 0, price, length))
+        cur.execute("INSERT OR IGNORE INTO TopTracks(artist_id, top_track, view_count, track_price, track_length) VALUES (?, ?, ?, ?, ?)", (name[1], track, viewCount, price, length))
         conn.commit()
 
 
