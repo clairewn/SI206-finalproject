@@ -34,20 +34,26 @@ def subscribers_for_artist(artist):
     request_url = base_url.format(artist,youtube_key)
     r = requests.get(request_url)
     if not r.ok:
+        print("r is not okay")
         return None
     data = r.text
     json_data = json.loads(data)
     if json_data['pageInfo']['totalResults'] == 0:
+        print("no results")
         return None
     channelID = json_data['items'][0]['id']['channelId']
     base_url2 = "https://www.googleapis.com/youtube/v3/channels?part=statistics&id={}&key={}"
     request_url2 = base_url2.format(channelID,youtube_key)
     r2 = requests.get(request_url2)
     if not r.ok:
+        print("r2 is not okay")
         return None
+    print(request_url2)
     data2 = r2.text
     json_data2 = json.loads(data2)
     if json_data2["items"][0]["statistics"]["hiddenSubscriberCount"] == True:
+        print("hiddenSubscriberCount")
+        #print(r2.text)
         return None
     return int(json_data2["items"][0]["statistics"]["subscriberCount"])
 

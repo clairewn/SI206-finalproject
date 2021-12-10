@@ -4,7 +4,7 @@ import json
 import requests
 import youtube
 
-#TESTING FILE
+#File for Grading!
 """
 Takes in the database cursor and connection as inputs.
 Returns: None
@@ -47,12 +47,12 @@ def obtain_artists(cur, conn, round):
 
     cur.execute("CREATE TABLE IF NOT EXISTS NapsterTopArtists(artist_id INTEGER PRIMARY KEY, name TEXT, genre_id INTEGER, subscribers INTEGER)")
     
-    cur.execute("SELECT COUNT (*) FROM NapsterTopArtists")
-    total_artists = cur.fetchone()[0]
+    cur.execute("SELECT COUNT (*) FROM NapsterTopArtists") 
+    total_artists = cur.fetchone()[0] #Get current number of artists
     base_url = 'https://api.napster.com/v2.2/genres/{}/artists/top?apikey=OGU2ZWQxNjEtZTI5Yi00MzM1LWE0YTgtNDg5ODZhMjhhZDJm'
     
     for g in range(0, 25):
-        genre = total_artists % total_genres  
+        genre = total_artists % total_genres #this should be the current genre ID 
         
         genre_id = genre + 1
 
@@ -68,6 +68,7 @@ def obtain_artists(cur, conn, round):
         response = requests.get(request_url)
         r = response.text
         data = json.loads(r)
+        
 
 
         # select artist
@@ -86,13 +87,16 @@ def obtain_artists(cur, conn, round):
         subscribers = youtube.subscribers_for_artist(artist['name'])
         if subscribers is None:
             print("no subscribers")
+            total_genres = total_genres - 1 
+            #since this artist should be skipped, increase genre count +1 in order to fit the correct genre number for the next artist. Prevent an infinite loop or program being stopped.
             continue
 
-        #print(subscribers)
         
         cur.execute("INSERT OR IGNORE INTO NapsterTopArtists(artist_id, name, genre_id, subscribers) VALUES (?, ?, ?, ?)", (total_artists, artist['name'], table_genre_id, subscribers))
         total_artists = total_artists + 1
 
+        cur.execute("SELECT COUNT(*) FROM Genres")
+        total_genres = cur.fetchone()[0] #reset this parameter since the artist is back on track 
         
 
         conn.commit()
