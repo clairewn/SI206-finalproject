@@ -86,7 +86,7 @@ def obtain_artists(cur, conn, round):
 
         subscribers = youtube.subscribers_for_artist(artist['name'])
         if subscribers is None:
-            print("no subscribers")
+            print("No subscribers")
             total_genres = total_genres - 1 
             #since this artist should be skipped, increase genre count +1 in order to fit the correct genre number for the next artist. Prevent an infinite loop or program being stopped.
             continue
@@ -210,7 +210,7 @@ def topTrackForArtist(cur, conn):
 
         viewCount = youtube.viewcount_for_track(track)
         if viewCount == None:
-            print("no viewcount")
+            print("No viewcount")
             continue
         #print(viewCount)
 
