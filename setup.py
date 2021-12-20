@@ -7,7 +7,7 @@ import youtube
 #File for Grading!
 """
 Takes in the database cursor and connection as inputs.
-Returns: None
+Returns: None.
 Creates the Genres Table we will utilize to obtain more data.
 Uses Napster API to get 23 total genres.
 """
